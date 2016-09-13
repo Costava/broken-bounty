@@ -1,0 +1,22 @@
+{
+  "name": "broken-bounty",
+  "version": "0.0.8",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-dev": "gulp clear-build && gulp dev-tasks && gulp embed && gulp html-dev",
+    "build-production": "gulp clear-build && gulp production-tasks && gulp embed && gulp html-production",
+    "debug-scripts": "webpack --watch --progress"
+  },
+  "devDependencies": {
+    "babel-core": "6.13.2",
+    "babel-loader": "6.2.4",
+    "babel-preset-es2015": "6.13.2",
+    "cssnano": "3.7.3",
+    "del": "2.2.2",
+    "gulp": "3.9.1",
+    "html-minifier": "3.0.2",
+    "postcss": "5.1.2",
+    "postcss-advanced-variables": "1.2.2",
+    "webpack": "1.13.1"
+  }
+}
