@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+
+		<title>Broken Bounty</title>
+
+		<style type="text/css">/* css hook */</style>
+	</head>
+
+	<body>
+		<div class="app-container">
+			<div class="menu main-menu js-main-menu">
+				<h1 class="game-title">Broken Bounty</h1>
+
+				<nav class="button-nav">
+					<button class="main-start js-main-start">←Start</button>
+					<button class="main-options js-main-options">Options→</button>
+				</nav>
+			</div>
+
+			<div class="menu prepare-menu js-prepare-menu">
+				<p>
+					Robots have glitched and become aggressive to humans.
+				</p>
+				<p>
+					As a bounty hunter, you must go city by city, eliminating the dangerous robots.
+				</p>
+				<p>
+					Use W, A, S, D to move.
+				</p>
+				<p>
+					Turn with left and right arrow keys.
+				</p>
+				<p>
+					Fire with space bar.
+				</p>
+
+				<nav class="button-nav">
+					<button class="prepare-start js-prepare-start">↓Ready↓</button>
+				</nav>
+			</div>
+
+			<canvas class="app-canvas js-app-canvas">Your browser does not support canvas.</canvas>
+		</div>
+
+		<div class="menu level-menu js-level-menu">
+			<h1 class="menu-title">City cleared</h1>
+
+			<ul class="level-stats">
+				<li class="level-stat">
+					<div>Robots eliminated</div>
+					<div class="js-robots-killed"></div>
+				</li>
+				<li class="money js-robots-killed-money"></li>
+
+				<li class="level-stat">
+					<div>Shots fired</div>
+					<div class="js-shots-fired"></div>
+				</li>
+				<li class="money js-shots-fired-money"></li>
+
+				<li class="level-stat">
+					<div>Building damage</div>
+					<div class="js-building-damage"></div>
+				</li>
+				<li class="money js-building-damage-money"></li>
+
+				<li class="level-stat">
+					<div>Injuries</div>
+					<div class="js-injuries"></div>
+				</li>
+				<li class="money js-injuries-money"></li>
+			</ul>
+
+			<div class="level-balance">
+				<div>Current Balance:&nbsp;</div>
+				<div class="js-current-balance"></div>
+			</div>
+
+			<nav class="button-nav">
+				<button class="next-level js-next-level">↓Next level↓</button>
+			</nav>
+		</div>
+
+		<div class="menu end-menu js-end-menu">
+			<h1 class="menu-title">It's all over!</h1>
+
+			<div class="end-info">
+				<div>Final balance:&nbsp;</div>
+				<div class="js-final-balance"></div>
+			</div>
+
+			<nav class="button-nav">
+				<button class="end-again js-end-again">←Play again</button>
+				<button class="end-main js-end-main">Main menu→</button>
+			</nav>
+		</div>
+
+		<div class="menu options-menu js-options-menu">
+			<h1 class="menu-title">Options</h1>
+
+			<ul class="options">
+				<li>
+					<div class="option-label">&nbsp;&nbsp;&nbsp;Max turn speed</div>
+					<div class="labeled-bar">
+						<div>Slower</div>
+						<input type="range" value="0.019" min="0.001" max="0.200" step="0.001" class="turn-speed js-turn-speed">
+						<div>&nbsp;Faster</div>
+					</div>
+				</li>
+				<li>
+					<div class="option-label">Turn acceleration</div>
+					<div class="labeled-bar">
+						<div>Slower</div>
+						<input type="range" value="0.040" min="0.001" max="1.000" step="0.001" class="turn-accel js-turn-accel">
+						<div>Instant</div>
+					</div>
+				</li>
+			</ul>
+
+			<div class="info author">Author: <a href="https://github.com/Costava" target="_blank">Costava</a></div>
+			<div class="info version">Version: 0.0.8</div>
+
+			<nav class="button-nav">
+				<button class="options-return js-options-return">↓Return↓</button>
+			</nav>
+		</div>
+
+		<script type="text/javascript">/* js hook */</script>
+	</body>
+</html>
