@@ -7,4 +7,6 @@ Robots have glitched and become aggressive to humans. As a bounty hunter, you mu
 - Turn with left and right arrow keys
 - Fire with space bar
 
+## [Play Online](https://costava.github.io/broken-bounty/dist/)
+
 ![Broken Bounty](http://i.imgur.com/Mf31Sa5.png)
