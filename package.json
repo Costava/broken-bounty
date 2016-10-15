@@ -1,6 +1,6 @@
 {
   "name": "broken-bounty",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-dev": "gulp clear-build && gulp dev-tasks && gulp embed && gulp html-dev",

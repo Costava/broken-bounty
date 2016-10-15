@@ -68,6 +68,14 @@ button {
 	color: inherit;
 
 	background-color: rgba(0, 0, 0, 0.1);
+
+	transition-property: background-color;
+	transition-duration: 0.2s;
+	transition-timing-function: ease;
+}
+
+button:hover {
+	background-color: rgba(0, 0, 0, 0.2);
 }
 
 .menu {
