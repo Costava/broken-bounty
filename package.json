@@ -13,7 +13,7 @@
     "babel-preset-es2015": "6.13.2",
     "cssnano": "3.7.3",
     "del": "2.2.2",
-    "gulp": "3.9.1",
+    "gulp": "4.0.2",
     "html-minifier": "3.0.2",
     "postcss": "5.1.2",
     "postcss-advanced-variables": "1.2.2",
