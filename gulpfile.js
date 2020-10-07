@@ -14,81 +14,7 @@ const del = require('del');
 // - run an html task
 
 //////////
-
-gulp.task('clear-build', ['delete-build'], function() {
-	// fs.mkdir('./dist', function(exception) {
-	// 	cb(exception);
-	// });
-
-	return Promise.all([
-		new Promise(function(resolve, reject) {
-			fs.mkdir('./dist', function(err) {
-				if (err) {
-					reject(err);
-				}
-				else {
-					resolve();
-				}
-			});
-		}),
-		new Promise(function(resolve, reject) {
-			fs.mkdir('./output', function(err) {
-				if (err) {
-					reject(err);
-				}
-				else {
-					resolve();
-				}
-			});
-		})
-	]);
-});
-
-gulp.task('dev-tasks',        ['css-dev',        'js-dev']);
-gulp.task('production-tasks', ['css-production', 'js-production']);
-
-gulp.task('embed', function() {
-	return Promise.all([
-		new Promise(function(resolve, reject) {
-			fs.readFile('./src/index.html', 'utf-8', function(err, html) {
-				if (err) reject(err);
-
-				resolve(html);
-			});
-		}),
-		new Promise(function(resolve, reject) {
-			fs.readFile('./output/style.css', 'utf-8', function(err, css) {
-				if (err) reject(err);
-
-				resolve(css);
-			});
-		}),
-		new Promise(function(resolve, reject) {
-			fs.readFile('./output/bundle.js', 'utf-8', function(err, js) {
-				if (err) reject(err);
-
-				resolve(js);
-			});
-		})
-	]).then(function(values) {
-		var html = values[0];
-		var css = values[1];
-		var js = values[2];
-
-		html = html.replace('/* css hook */', css);
-		html = html.replace('/* js hook */', js);
-
-		return new Promise(function(resolve, reject) {
-			fs.writeFile('./output/index.html', html, function(err) {
-				if (err) reject(err);
-
-				resolve();
-			});
-		});
-	});
-});
-
-//////////
+// Task Define
 
 gulp.task('delete-build', function() {
 	// return del(['./dist']);
@@ -184,6 +110,82 @@ gulp.task('html-production', function() {
 
 		return new Promise(function(resolve, reject) {
 			fs.writeFile('./dist/index.html', result, function(err) {
+				if (err) reject(err);
+
+				resolve();
+			});
+		});
+	});
+});
+
+//////////
+// Task Execute
+gulp.task('clear-build', gulp.series('delete-build', function(){
+	// fs.mkdir('./dist', function(exception) {
+	// 	cb(exception);
+	// });
+
+	return Promise.all([
+		new Promise(function(resolve, reject) {
+			fs.mkdir('./dist', function(err) {
+				if (err) {
+					reject(err);
+				}
+				else {
+					resolve();
+				}
+			});
+		}),
+		new Promise(function(resolve, reject) {
+			fs.mkdir('./output', function(err) {
+				if (err) {
+					reject(err);
+				}
+				else {
+					resolve();
+				}
+			});
+		})
+	]);
+}));
+
+gulp.task('dev-tasks', gulp.series('css-dev', 'js-dev'));
+gulp.task('production-tasls', gulp.series('css-production', 'js-production'));
+
+
+gulp.task('embed', function() {
+	return Promise.all([
+		new Promise(function(resolve, reject) {
+			fs.readFile('./src/index.html', 'utf-8', function(err, html) {
+				if (err) reject(err);
+
+				resolve(html);
+			});
+		}),
+		new Promise(function(resolve, reject) {
+			fs.readFile('./output/style.css', 'utf-8', function(err, css) {
+				if (err) reject(err);
+
+				resolve(css);
+			});
+		}),
+		new Promise(function(resolve, reject) {
+			fs.readFile('./output/bundle.js', 'utf-8', function(err, js) {
+				if (err) reject(err);
+
+				resolve(js);
+			});
+		})
+	]).then(function(values) {
+		var html = values[0];
+		var css = values[1];
+		var js = values[2];
+
+		html = html.replace('/* css hook */', css);
+		html = html.replace('/* js hook */', js);
+
+		return new Promise(function(resolve, reject) {
+			fs.writeFile('./output/index.html', html, function(err) {
 				if (err) reject(err);
 
 				resolve();
