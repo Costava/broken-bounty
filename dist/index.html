@@ -1,0 +1,3528 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+
+		<title>Broken Bounty</title>
+
+		<style type="text/css">*, *:before, *:after {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+html, body {
+	width: 100%;
+	height: 100%;
+
+	margin: 0;
+	border: 0;
+	padding: 0;
+}
+
+/* ////////// */
+
+.app-container {
+	position: absolute;
+
+	width: 100%;
+	height: 100%;
+
+	margin: 0;
+	border: 0;
+	padding: 0;
+}
+
+.app-canvas {
+	position: absolute;
+
+	width: 100%;
+	height: 100%;
+
+	margin: 0;
+	border: 0;
+	padding: 0;
+}
+
+body {
+	color: #fff;
+
+	overflow: hidden;
+}
+
+a {
+	color: inherit;
+	text-decoration: inherit;
+
+	transition-property: opacity;
+	transition-duration: 0.2s;
+	transition-timing-function: ease;
+}
+
+a:hover {
+	opacity: 0.7;
+	text-decoration: underline;
+}
+
+/* ////////// */
+
+button {
+	border: 0.5vmin solid #fff;
+	padding: 0.8vmin;
+
+	font-size: 4vh;
+	font-family: sans-serif;
+	color: inherit;
+
+	background-color: rgba(0, 0, 0, 0.1);
+
+	transition-property: background-color;
+	transition-duration: 0.2s;
+	transition-timing-function: ease;
+}
+
+button:hover {
+	background-color: rgba(0, 0, 0, 0.2);
+}
+
+.menu {
+	position: absolute;
+	visibility: hidden;
+}
+
+.menu-title, .game-title {
+	width: 100vw;
+	margin: 5vh 0;
+	border: 0;
+	padding: 0;
+	text-align: center;
+
+	font-size: 10vh;
+	font-family: sans-serif;
+}
+
+.button-nav {
+	width: 100vw;
+
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.button-nav > *:nth-child(2) {
+	margin: 0 0 0 2vmin;
+}
+
+.options, .info {
+	font-family: monospace;
+}
+
+.options {
+	width: 100vw;
+	margin: 0;
+	border: 0;
+	padding: 0;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	font-size: 5vmin;
+
+	list-style: none;
+}
+
+.options > li {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.options > li > div {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.option-label:after {
+	content: ":";
+}
+
+.labeled-bar {
+	margin: 0 0 0 4vmin;
+}
+
+.info {
+	width: 100vw;
+	text-align: center;
+	font-size: 3vmin;
+}
+
+.author {
+	margin: 5vh 0 0 0;
+}
+
+.version {
+	margin: 0 0 5vh 0;
+}
+
+p {
+	margin: 2vh 0;
+
+	text-align: center;
+	font-size: 3.5vh;
+	font-family: sans-serif;
+}
+
+.options-return {
+	font-size: 3vh;
+}
+
+.level-stats {
+	margin: 0 0 0 50%;
+	padding: 0;
+	transform: translate(-50%, 0);
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	font-size: 3.5vh;
+	font-family: sans-serif;
+
+	list-style: none;
+}
+
+.level-stat {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.level-stat > *:nth-child(1):after {
+	content: ":\00a0";
+}
+
+.money {
+	margin: 0 0 1vh 0;
+}
+
+.level-balance {
+	margin: 3vh 0;
+
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+
+	font-size: 3.5vh;
+	font-family: sans-serif;
+}
+
+.end-info {
+	width: 100vw;
+	margin: 0 0 5vh 0;
+
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+
+	font-size: 5vmin;
+	font-family: sans-serif;
+}
+</style>
+	</head>
+
+	<body>
+		<div class="app-container">
+			<div class="menu main-menu js-main-menu">
+				<h1 class="game-title">Broken Bounty</h1>
+
+				<nav class="button-nav">
+					<button class="main-start js-main-start">←Start</button>
+					<button class="main-options js-main-options">Options→</button>
+				</nav>
+			</div>
+
+			<div class="menu prepare-menu js-prepare-menu">
+				<p>
+					Robots have glitched and become aggressive to humans.
+				</p>
+				<p>
+					As a bounty hunter, you must go city by city, eliminating the dangerous robots.
+				</p>
+				<p>
+					Use W, A, S, D to move.
+				</p>
+				<p>
+					Turn with left and right arrow keys.
+				</p>
+				<p>
+					Fire with space bar.
+				</p>
+
+				<nav class="button-nav">
+					<button class="prepare-start js-prepare-start">↓Ready↓</button>
+				</nav>
+			</div>
+
+			<canvas class="app-canvas js-app-canvas">Your browser does not support canvas.</canvas>
+		</div>
+
+		<div class="menu level-menu js-level-menu">
+			<h1 class="menu-title">City cleared</h1>
+
+			<ul class="level-stats">
+				<li class="level-stat">
+					<div>Robots eliminated</div>
+					<div class="js-robots-killed"></div>
+				</li>
+				<li class="money js-robots-killed-money"></li>
+
+				<li class="level-stat">
+					<div>Shots fired</div>
+					<div class="js-shots-fired"></div>
+				</li>
+				<li class="money js-shots-fired-money"></li>
+
+				<li class="level-stat">
+					<div>Building damage</div>
+					<div class="js-building-damage"></div>
+				</li>
+				<li class="money js-building-damage-money"></li>
+
+				<li class="level-stat">
+					<div>Injuries</div>
+					<div class="js-injuries"></div>
+				</li>
+				<li class="money js-injuries-money"></li>
+			</ul>
+
+			<div class="level-balance">
+				<div>Current Balance:&nbsp;</div>
+				<div class="js-current-balance"></div>
+			</div>
+
+			<nav class="button-nav">
+				<button class="next-level js-next-level">↓Next level↓</button>
+			</nav>
+		</div>
+
+		<div class="menu end-menu js-end-menu">
+			<h1 class="menu-title">It's all over!</h1>
+
+			<div class="end-info">
+				<div>Final balance:&nbsp;</div>
+				<div class="js-final-balance"></div>
+			</div>
+
+			<nav class="button-nav">
+				<button class="end-again js-end-again">←Play again</button>
+				<button class="end-main js-end-main">Main menu→</button>
+			</nav>
+		</div>
+
+		<div class="menu options-menu js-options-menu">
+			<h1 class="menu-title">Options</h1>
+
+			<ul class="options">
+				<li>
+					<div class="option-label">&nbsp;&nbsp;&nbsp;Max turn speed</div>
+					<div class="labeled-bar">
+						<div>Slower</div>
+						<input type="range" value="0.019" min="0.001" max="0.200" step="0.001" class="turn-speed js-turn-speed">
+						<div>Faster&nbsp;</div>
+					</div>
+				</li>
+				<li>
+					<div class="option-label">Turn acceleration</div>
+					<div class="labeled-bar">
+						<div>Slower</div>
+						<input type="range" value="0.040" min="0.001" max="1.000" step="0.001" class="turn-accel js-turn-accel">
+						<div>Instant</div>
+					</div>
+				</li>
+			</ul>
+
+			<div class="info author">Author: <a href="https://github.com/Costava" target="_blank">Costava</a></div>
+			<div class="info version">Version: 1.0.1</div>
+
+			<nav class="button-nav">
+				<button class="options-return js-options-return">↓Return↓</button>
+			</nav>
+		</div>
+
+		<script type="text/javascript">/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+
+
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _MaxChildSize = __webpack_require__(1);
+
+	var _MaxChildSize2 = _interopRequireDefault(_MaxChildSize);
+
+	var _ListenerSystem = __webpack_require__(2);
+
+	var _ListenerSystem2 = _interopRequireDefault(_ListenerSystem);
+
+	var _Timeout = __webpack_require__(3);
+
+	var _Timeout2 = _interopRequireDefault(_Timeout);
+
+	var _Flattener = __webpack_require__(4);
+
+	var _Flattener2 = _interopRequireDefault(_Flattener);
+
+	var _Color = __webpack_require__(8);
+
+	var _Color2 = _interopRequireDefault(_Color);
+
+	var _Game = __webpack_require__(9);
+
+	var _Game2 = _interopRequireDefault(_Game);
+
+	var _Keyboard = __webpack_require__(22);
+
+	var _Keyboard2 = _interopRequireDefault(_Keyboard);
+
+	var _Menu = __webpack_require__(23);
+
+	var _Menu2 = _interopRequireDefault(_Menu);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	console.log('Welcome');
+
+	//////////
+
+	//////////
+
+	var canvas = document.querySelector('.js-app-canvas');
+	var ctx = canvas.getContext('2d');
+
+	var keyboard = new _Keyboard2.default(window);
+	keyboard.start();
+
+	//////////
+
+	var game = new _Game2.default({
+		canvas: canvas,
+		ctx: ctx,
+		keyboard: keyboard
+	});
+
+	game.dieCallback = function () {
+		menus.end.start();
+	};
+
+	game.levelEndCallback = function () {
+		menus.level.start();
+	};
+
+	//////////
+
+	var menus = {};
+
+	menus.main = new _Menu2.default({
+		name: "main",
+		element: document.querySelector('.js-main-menu'),
+		listenerSystems: [new _ListenerSystem2.default(document.querySelector('.js-main-start'), 'click', function () {
+			game.dualLooper.stopCallback = function () {
+				menus.prepare.start();
+			};
+
+			menus.main.stop();
+		}), new _ListenerSystem2.default(document.querySelector('.js-main-options'), 'click', function () {
+			menus.main.stopListenerSystems();
+			menus.main.hide();
+
+			menus.options.start();
+		}), new _ListenerSystem2.default(document, 'keydown', function (e) {
+			var keyID = _Keyboard2.default.getKeyID(e);
+
+			if (keyID == 37) {
+				document.querySelector('.js-main-start').click();
+			} else if (keyID == 39) {
+				document.querySelector('.js-main-options').click();
+			}
+		})],
+		startWork: function startWork() {
+			game.prepMainMenu();
+			game.start();
+		},
+		stopWork: function stopWork() {
+			game.stop();
+		}
+	});
+
+	menus.prepare = new _Menu2.default({
+		name: "prepare",
+		element: document.querySelector('.js-prepare-menu'),
+		listenerSystems: [new _ListenerSystem2.default(document.querySelector('.js-prepare-start'), 'click', function () {
+			game.dualLooper.stopCallback = function () {
+				game.prepLevel(1);
+				game.start();
+			};
+
+			menus.prepare.stop();
+		}), new _ListenerSystem2.default(document, 'keydown', function (e) {
+			var keyID = _Keyboard2.default.getKeyID(e);
+
+			if (keyID == 40) {
+				document.querySelector('.js-prepare-start').click();
+			}
+		})],
+		startWork: function startWork() {
+			game.prepPrepareMenu();
+			game.start();
+		},
+		stopWork: function stopWork() {
+			game.stop();
+		}
+	});
+
+	menus.level = new _Menu2.default({
+		name: "level",
+		element: document.querySelector('.js-level-menu'),
+		listenerSystems: [new _ListenerSystem2.default(document.querySelector('.js-next-level'), 'click', function () {
+			game.prepLevel(game.level + 1);
+
+			menus.level.stop();
+		}), new _ListenerSystem2.default(document, 'keydown', function (e) {
+			var keyID = _Keyboard2.default.getKeyID(e);
+
+			if (keyID == 40) {
+				document.querySelector('.js-next-level').click();
+			}
+		})],
+		startWork: function startWork() {},
+		stopWork: function stopWork() {
+			game.start();
+		}
+	});
+
+	menus.end = new _Menu2.default({
+		name: "end",
+		element: document.querySelector('.js-end-menu'),
+		listenerSystems: [new _ListenerSystem2.default(document.querySelector('.js-end-again'), 'click', function () {
+			game.prepLevel(1);
+
+			menus.end.stop();
+
+			game.start();
+		}), new _ListenerSystem2.default(document.querySelector('.js-end-main'), 'click', function () {
+			menus.end.stop();
+
+			menus.main.start();
+		}), new _ListenerSystem2.default(document, 'keydown', function (e) {
+			var keyID = _Keyboard2.default.getKeyID(e);
+
+			if (keyID == 37) {
+				document.querySelector('.js-end-again').click();
+			} else if (keyID == 39) {
+				document.querySelector('.js-end-main').click();
+			}
+		})],
+		startWork: function startWork() {},
+		stopWork: function stopWork() {}
+	});
+
+	menus.options = new _Menu2.default({
+		name: "options",
+		element: document.querySelector('.js-options-menu'),
+		listenerSystems: [new _ListenerSystem2.default(document.querySelector('.js-options-return'), 'click', function () {
+			menus.options.stop();
+		}), new _ListenerSystem2.default(document.querySelector('.js-turn-speed'), 'change', function () {
+			var value = Number(this.value);
+
+			game.playerTurnSpeed = value;
+
+			console.log("Turn speed:", game.playerTurnSpeed);
+		}), new _ListenerSystem2.default(document.querySelector('.js-turn-accel'), 'change', function () {
+			var value = Number(this.value);
+
+			game.playerTurnRateAccel = value;
+
+			console.log("Turn acceleration:", game.playerTurnRateAccel);
+		}), new _ListenerSystem2.default(document, 'keydown', function (e) {
+			var keyID = _Keyboard2.default.getKeyID(e);
+
+			if (keyID == 40) {
+				document.querySelector('.js-options-return').click();
+			}
+		})],
+		startWork: function startWork() {},
+		stopWork: function stopWork() {
+			menus.main.show();
+			menus.main.startListenerSystems();
+		}
+	});
+
+	//////////
+
+	menus.main.start();
+
+	//////////
+
+	function handleResize() {
+		var canvas = document.querySelector('.js-app-canvas');
+		var ctx = canvas.getContext('2d');
+
+		canvas.width = canvas.offsetWidth;
+		canvas.height = canvas.offsetHeight;
+
+		game.flattener.setAspectRatio(game.canvas.width / game.canvas.height);
+
+		game.draw();
+	}
+
+	var handleResizeTimeout = new _Timeout2.default(handleResize, 40);
+
+	var handleResizeLS = new _ListenerSystem2.default(window, 'resize', handleResizeTimeout.set.bind(handleResizeTimeout));
+
+	handleResizeLS.start();
+
+	// Initial run
+	handleResize();
+
+	//////////
+
+/***/ },
+/* 1 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	exports.default = function (childAspectWidth, childAspectHeight, parentWidth, parentHeight) {
+		if (parentWidth <= 0 || parentHeight <= 0) {
+			return { width: 0, height: 0 };
+		} else if (childAspectWidth < 0 || childAspectHeight < 0 || childAspectWidth === 0 && childAspectHeight === 0) {
+			return { width: 0, height: 0 };
+		} else if (childAspectWidth === 0) {
+			return { width: 0, height: parentHeight };
+		} else if (childAspectHeight === 0) {
+			return { width: parentWidth, height: 0 };
+		}
+
+		// else:
+		//  childAspectWidth & Height > 0
+		//  parentWidth & Height      > 0
+
+		var width, height;
+		var childAspectRatio = childAspectWidth / childAspectHeight;
+		var parentAspectRatio = parentWidth / parentHeight;
+
+		if (childAspectRatio === parentAspectRatio) {
+			width = parentWidth;
+			height = parentHeight;
+		} else if (childAspectRatio < parentAspectRatio) {
+			var scale = Math.floor(parentHeight / childAspectHeight);
+
+			width = scale * childAspectWidth;
+			height = scale * childAspectHeight;
+		} else if (childAspectRatio > parentAspectRatio) {
+			var scale = Math.floor(parentWidth / childAspectWidth);
+
+			width = scale * childAspectWidth;
+			height = scale * childAspectHeight;
+		} else {
+			console.log("Unknown MaxChildSize condition. childAspectWidth:", childAspectWidth, "childAspectHeight:", childAspectHeight, "parentWidth:", parentWidth, "parentHeight:", parentHeight);
+		}
+
+		return { width: width, height: height };
+	};
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	/**
+	 * @param {HTML element} target
+	 * @param {event type} eventType
+	 * @param {function} work - what to do when hear event
+	 */
+	function ListenerSystem(target, eventType, work) {
+		this.target = target;
+		this.eventType = eventType;
+		this.work = work;
+
+		this.active = false;
+	}
+
+	ListenerSystem.prototype.start = function () {
+		if (!this.active) {
+			this.target.addEventListener(this.eventType, this.work);
+
+			this.active = true;
+		}
+	};
+
+	ListenerSystem.prototype.stop = function () {
+		if (this.active) {
+			this.target.removeEventListener(this.eventType, this.work);
+
+			this.active = false;
+		}
+	};
+
+	exports.default = ListenerSystem;
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function Timeout(work, delay) {
+		this.work = work;
+		this.delay = delay;
+
+		this.waiting = false;
+		this.timeout;
+	}
+
+	Timeout.prototype.set = function () {
+		if (this.waiting) {
+			clearTimeout(this.timeout);
+		}
+
+		this.timeout = setTimeout(function () {
+			this.waiting = false;
+
+			this.work();
+		}.bind(this), this.delay);
+
+		this.waiting = true;
+	};
+
+	Timeout.prototype.clear = function () {
+		if (this.waiting) {
+			clearTimeout(this.timeout);
+
+			this.waiting = false;
+		}
+	};
+
+	exports.default = Timeout;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _Vector = __webpack_require__(5);
+
+	var _Vector2 = _interopRequireDefault(_Vector);
+
+	var _Vector3 = __webpack_require__(7);
+
+	var _Vector4 = _interopRequireDefault(_Vector3);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * Get 2D points from 3D points
+	 * @param {object} o
+	 * - @property {number} [nearDistanceY]
+	 * - - how many units from center of screen to top or bottom at position of camera
+	 * - @property {number} [farDistanceY]
+	 * - - how many units from center of screen to top or bottom at end of viewDistance
+	 * - @property {number} [viewDistance]
+	 * - - how far can see
+	 * - @property {number} [fadeStartProp]
+	 * - - a [0, 1] proportion of viewDistance where stuff starts to become transparent
+	 * - @property {number} [aspectRatio]
+	 */
+	function Flattener(o) {
+		this.nearDistance = new _Vector2.default(0, o.nearDistanceY || Flattener.default.nearDistanceY);
+
+		this.farDistance = new _Vector2.default(0, o.farDistanceY || Flattener.default.farDistanceY);
+
+		this.viewDistance = o.viewDistance || Flattener.default.viewDistance;
+
+		// this.setFadeStartProp(o.fadeStartProp);
+
+		var aR = o.aspectRatio || Flattener.default.aspectRatio;
+
+		this.setAspectRatio(aR);
+	}
+
+	// Flattener.default = {
+	// 	nearDistanceY: 6,
+	// 	farDistanceY: 110,
+	// 	viewDistance: 100,
+	// 	fadeStartProp: 0.9,
+	// 	aspectRatio: 16 / 9
+	// };
+
+	// // def with e
+	// Flattener.default = {
+	// 	nearDistanceY: 10,
+	// 	farDistanceY: 40,
+	// 	viewDistance: 100,
+	// 	fadeStartProp: 0.9,
+	// 	aspectRatio: 16 / 9
+	// };
+
+	Flattener.default = {
+		nearDistanceY: 0.1,
+		farDistanceY: 40,
+		viewDistance: 100,
+		fadeStartProp: 0.9,
+		aspectRatio: 16 / 9
+	};
+
+	// Flattener.prototype.setFadeStartProp = function(value) {
+	// 	this.fadeStartProp = value || Flattener.default.fadeStartProp;
+	//
+	// 	this.fadeStartDistance = this.fadeStartProp * this.viewDistance;
+	//
+	// 	this.fadeSectionDistance = this.viewDistance - this.fadeStartDistance;
+	// };
+
+	Flattener.prototype.setAspectRatio = function (value) {
+		this.aspectRatio = value || Flattener.default.aspectRatio;
+
+		this.nearDistance.x = this.nearDistance.y * this.aspectRatio;
+		this.farDistance.x = this.farDistance.y * this.aspectRatio;
+
+		this.distanceDiff = new _Vector2.default(this.farDistance.x - this.nearDistance.x, this.farDistance.y - this.nearDistance.y);
+	};
+
+	/**
+	 * Get 2D coordinates (where (0, 0) is top left and (1, 1) is bottom right) of pos for cameraPos and cameraDir
+	 * @param {object/Vector3} cameraPos
+	 * @param {number/radians} cameraDir - direction camera is pointing
+	 * @param {object/Vector3} pos
+	 */
+	Flattener.prototype.get2D = function (cameraPos, cameraDir, pos) {
+		var xyDistance = pos.distance2(cameraPos);
+
+		var posDir = cameraPos.angleTo2(pos);
+
+		// from cameraDir to pos
+		var relativeAngle = Math.abs(posDir - cameraDir);
+
+		var angleDiff = relativeAngle % (2 * Math.PI);
+
+		// if (angleDiff > Math.PI) {
+		// 	angleDiff = (2 * Math.PI) - angleDiff;
+		// }
+		//
+		// if (angleDiff > Math.PI / 2) {
+		// 	return undefined;
+		// }
+
+		var outDistance = xyDistance * Math.cos(relativeAngle);
+		var sideDistance = xyDistance * Math.sin(relativeAngle);
+
+		// var opacity;
+		// if (outDistance >= this.viewDistance) {
+		// 	return undefined;
+		// }
+		// else if (outDistance <= this.fadeStartDistance) {
+		// 	opacity = 1;
+		// }
+		// else {
+		// 	opacity = 1 - ((outDistance - this.fadeStartDistance) / this.fadeSectionDistance);
+		// }
+
+		var distance = {};
+
+		if (outDistance >= 0) {
+			distance.x = outDistance / this.viewDistance * this.distanceDiff.x + this.nearDistance.x;
+			distance.y = outDistance / this.viewDistance * this.distanceDiff.y + this.nearDistance.y;
+		} else {
+			distance.x = -outDistance / this.viewDistance * this.distanceDiff.x + this.nearDistance.x;
+			distance.y = -outDistance / this.viewDistance * this.distanceDiff.y + this.nearDistance.y;
+		}
+
+		// if (distance.y > 0) {
+		// 	distance.y *= -1;
+		// }
+
+		var horizProp = Math.abs(sideDistance / distance.x);
+
+		// console.log("horizProp:", horizProp);
+
+		var cameraDirVector = new _Vector2.default(Math.cos(cameraDir), Math.sin(cameraDir));
+		var posDirVector = new _Vector2.default(Math.cos(posDir), Math.sin(posDir));
+		var crossZ = cameraDirVector.x * posDirVector.y - cameraDirVector.y * posDirVector.x;
+
+		// console.log("crossZ:", crossZ);
+
+		var horizValue;
+		if (crossZ > 0) {
+			horizValue = 0.5 - 0.5 * horizProp;
+
+			if (outDistance < 0) {
+				horizValue -= 0.5;
+			}
+		} else if (crossZ < 0) {
+			horizValue = 0.5 + 0.5 * horizProp;
+
+			if (outDistance < 0) {
+				horizValue += 0.5;
+			}
+		} else {
+			horizValue = 0.5;
+
+			// var angleDiff = Math.abs(cameraDir - posDir) % (2 * Math.PI);
+			//
+			// if (angleDiff > Math.PI) {
+			// 	angleDiff = (2 * Math.PI) - angleDiff;
+			// }
+
+			// // Should check if it is in front and not behind
+			// if (Math.abs(Math.atan2(Math.sin(cameraDir) / Math.cos(cameraDir)) - Math.atan2(Math.sin(posDir) / Math.cos(posDir))) < 0.1) {
+			// 	horizValue = 0.5;
+			// }
+			// else {
+			// 	// horizValue = 0.6;
+			// 	return undefined;
+			// }
+		}
+
+		var zDifference = cameraPos.z - pos.z;
+
+		var vertValue = 0.5 * (zDifference / distance.y) + 0.5;
+
+		if (outDistance < 0) {
+			if (zDifference > 0) {
+				vertValue += 0.5;
+			} else {
+				vertValue -= 0.5;
+			}
+		}
+
+		// return {
+		// 	x: horizValue,
+		// 	y: vertValue,
+		// 	opacity: opacity
+		// };
+
+		return new _Vector2.default(horizValue, vertValue);
+	};
+
+	/**
+	 * Is point behind the pos when facing in dir
+	 * @param {object/Vector2} pos
+	 * @param {number} dir
+	 * @param {object/Vector2} points
+	 */
+	Flattener.allPointsBehind = function (pos, dir, points) {
+		return points.every(function (point) {
+			return Flattener.pointBehind(pos, dir, point);
+		});
+	};
+
+	/**
+	 * Is point behind the pos when facing in dir
+	 * @param {object/Vector2} pos
+	 * @param {number} dir
+	 * @param {object/Vector2} point
+	 */
+	Flattener.pointBehind = function (pos, dir, point) {
+		var angleDiff = Math.abs(dir - pos.angleTo2(point)) % (2 * Math.PI);
+
+		if (angleDiff > Math.PI) {
+			angleDiff = 2 * Math.PI - angleDiff;
+		}
+
+		return angleDiff > Math.PI / 2;
+	};
+
+	Flattener.prototype.getPoints2D = function (cameraPos, cameraDir, points) {
+		var points2D = [];
+
+		var pointsLength = points.length;
+		for (var i = 0; i < pointsLength; ++i) {
+			var result = this.get2D(cameraPos, cameraDir, points[i]);
+
+			if (result != undefined) {
+				points2D.push(result);
+			}
+		}
+
+		return points2D;
+	};
+
+	Flattener.prototype.fillShape = function (canvas, ctx, points2D, color) {
+		if (points2D.length > 2) {
+			ctx.save();
+			ctx.scale(canvas.width, canvas.height);
+
+			ctx.beginPath();
+			ctx.moveTo(points2D[0].x, points2D[0].y);
+
+			var points2DLength = points2D.length;
+			for (var i = 1; i < points2DLength; ++i) {
+				ctx.lineTo(points2D[i].x, points2D[i].y);
+			}
+
+			ctx.closePath();
+
+			ctx.fillStyle = color;
+			ctx.fill();
+			ctx.restore();
+		}
+	};
+
+	exports.default = Flattener;
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _Rect = __webpack_require__(6);
+
+	var _Rect2 = _interopRequireDefault(_Rect);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * Chainable Vector2 class
+	 * @param {number} x
+	 * @param {number} y
+	 */
+	function Vector2(x, y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	Vector2.zero = function () {
+		return new Vector2(0, 0);
+	};
+
+	Vector2.fromAngle = function (rads) {
+		return new Vector2(Math.cos(rads), Math.sin(rads));
+	};
+
+	/**
+	 * Return average point of the array of points
+	 */
+	Vector2.average = function (array) {
+		var xTotal = 0;
+		var yTotal = 0;
+
+		var arrayLength = array.length;
+
+		for (var i = 0; i < arrayLength; ++i) {
+			xTotal += array[i].x;
+			yTotal += array[i].y;
+		}
+
+		return new Vector2(xTotal / arrayLength, yTotal / arrayLength);
+	};
+
+	/**
+	 * @returns {object/Vector2}
+	 */
+	Vector2.prototype.clone = function () {
+		return new Vector2(this.x, this.y);
+	};
+
+	Vector2.prototype.setMagnitude = function (newMag) {
+		var oldMag = this.magnitude();
+
+		this.x *= newMag / oldMag;
+		this.y *= newMag / oldMag;
+
+		return this;
+	};
+
+	/**
+	 * @param {object/Vector2} v
+	 * @returns {object/Vector2}
+	 */
+	Vector2.prototype.add = function (v) {
+		this.x += v.x;
+		this.y += v.y;
+
+		return this;
+	};
+
+	/**
+	 * @param {object/Vector2} v
+	 * @returns {object/Vector2}
+	 */
+	Vector2.prototype.subtract = function (v) {
+		this.x -= v.x;
+		this.y -= v.y;
+
+		return this;
+	};
+
+	Vector2.prototype.scale = function (factor) {
+		this.x *= factor;
+		this.y *= factor;
+
+		return this;
+	};
+
+	/**
+	 * Rotate around v by rads
+	 * @param {object/Vector2} v
+	 * @param {number} rads
+	 */
+	Vector2.prototype.rotate = function (v, rads) {
+		var differenceVec = this.clone().subtract(v);
+		var dVMag = differenceVec.magnitude();
+
+		var oldAngle = differenceVec.angle();
+		var newAngle = oldAngle + rads;
+
+		var newDifferenceVec = Vector2.fromAngle(newAngle).setMagnitude(dVMag);
+
+		this.x = v.x + newDifferenceVec.x;
+		this.y = v.y + newDifferenceVec.y;
+
+		return this;
+	};
+
+	/**
+	 * @returns {number}
+	 */
+	Vector2.prototype.magnitude = function () {
+		return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+	};
+
+	/**
+	 * @returns {number}
+	 */
+	Vector2.prototype.angle = function () {
+		return Math.atan2(this.y, this.x);
+	};
+
+	Vector2.prototype.angleTo = function (v) {
+		return v.clone().subtract(this).angle();
+	};
+
+	/**
+	 * @param {object/Vector2} v
+	 * @returns {number}
+	 */
+	Vector2.prototype.distance = function (v) {
+		// Use a clone so that this is not changed
+		return this.clone().subtract(v).magnitude();
+	};
+
+	/**
+	 * @param {object/Vector2} v
+	 * @returns {boolean}
+	 */
+	Vector2.prototype.equals = function (v) {
+		return this.x == v.x && this.y == v.y;
+	};
+
+	/**
+	 * @param {object/Vector2} v
+	 * @returns {boolean}
+	 */
+	Vector2.prototype.lessThan = function (v) {
+		return this.x < v.x && this.y < v.y;
+	};
+
+	/**
+	 * @param {object/Vector2} v
+	 * @returns {boolean}
+	 */
+	Vector2.prototype.lessThanOrEqualTo = function (v) {
+		return this.x <= v.x && this.y <= v.y;
+	};
+
+	/**
+	 * @param {object/Vector2} v
+	 * @returns {boolean}
+	 */
+	Vector2.prototype.greaterThan = function (v) {
+		return this.x > v.x && this.y > v.y;
+	};
+
+	/**
+	 * @param {object/Vector2} v
+	 * @returns {boolean}
+	 */
+	Vector2.prototype.greaterThanOrEqualTo = function (v) {
+		return this.x >= v.x && this.y >= v.y;
+	};
+
+	/**
+	 * @param {object/Rect} r
+	 * @returns {boolean}
+	 */
+	Vector2.prototype.inside = function (r) {
+		var relativeVec = this.clone().subtract(r.pos);
+
+		return relativeVec.lessThan(r.dim) && relativeVec.greaterThan(Vector2.zero());
+	};
+
+	/**
+	 * @param {object/Rect} r
+	 * @returns {boolean}
+	 */
+	Vector2.prototype.on = function (r) {
+		var relativeVec = this.clone().subtract(r.pos);
+
+		return relativeVec.lessThanOrEqualTo(r.dim) && relativeVec.greaterThanOrEqualTo(Vector2.zero());
+	};
+
+	exports.default = Vector2;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _Vector = __webpack_require__(5);
+
+	var _Vector2 = _interopRequireDefault(_Vector);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @param {object/Vector2} pos - top left corner of rectangle
+	 * @param {object/Vector2} dim - dimensions of rectangle
+	 */
+	function Rect(pos, dim) {
+	  this.pos = pos;
+	  this.dim = dim;
+	}
+
+	/**
+	 * Returns the opposite corner to pos
+	 */
+	Rect.prototype.getOpposite = function () {
+	  return this.pos.clone().add(this.dim);
+	};
+
+	/**
+	 * @param {object/Rect} r
+	 * @returns {boolean}
+	 */
+	Rect.prototype.doesNotOverlap = function (r) {
+	  var vo1 = this.getOpposite();
+	  var vo2 = r.getOpposite();
+
+	  return r.pos.x > vo1.x || vo2.x < this.pos.x || r.pos.y > vo1.y || vo2.y < this.pos.y;
+	};
+
+	/**
+	 * @param {object/Rect} r
+	 * @returns {boolean}
+	 */
+	Rect.prototype.overlaps = function (r) {
+	  return !this.doesNotOverlap(r);
+	};
+
+	exports.default = Rect;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _Vector = __webpack_require__(5);
+
+	var _Vector2 = _interopRequireDefault(_Vector);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * Chainable Vector3 class
+	 * @param {number} x
+	 * @param {number} y
+	 * @param {number} z
+	 */
+	function Vector3(x, y, z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+
+	Vector3.zero = function () {
+		return new Vector3(0, 0, 0);
+	};
+
+	/**
+	 * Return average point of the array of points
+	 */
+	Vector3.average = function (array) {
+		var xTotal = 0;
+		var yTotal = 0;
+		var zTotal = 0;
+
+		var arrayLength = array.length;
+
+		for (var i = 0; i < arrayLength; ++i) {
+			xTotal += array[i].x;
+			yTotal += array[i].y;
+			zTotal += array[i].z;
+		}
+
+		return new Vector3(xTotal / arrayLength, yTotal / arrayLength, zTotal / arrayLength);
+	};
+
+	Vector3.prototype.clone = function () {
+		return new Vector3(this.x, this.y, this.z);
+	};
+
+	Vector3.prototype.clone2 = function () {
+		return new _Vector2.default(this.x, this.y);
+	};
+
+	Vector3.prototype.add = function (v) {
+		this.x += v.x;
+		this.y += v.y;
+		this.z += v.z;
+
+		return this;
+	};
+
+	Vector3.prototype.add2 = function (v) {
+		this.x += v.x;
+		this.y += v.y;
+
+		return this;
+	};
+
+	Vector3.prototype.subtract = function (v) {
+		this.x -= v.x;
+		this.y -= v.y;
+		this.z -= v.z;
+
+		return this;
+	};
+
+	Vector3.prototype.subtract2 = function (v) {
+		this.x -= v.x;
+		this.y -= v.y;
+
+		return this;
+	};
+
+	/**
+	 * Rotate around v by rads
+	 * @param {object/Vector2/3} v
+	 * @param {number} rads
+	 */
+	Vector3.prototype.rotateZ = function (v, rads) {
+		var differenceVec = this.clone().subtract2(v);
+		var dVMag = differenceVec.magnitude2();
+
+		var newAngle = differenceVec.angle2() + rads;
+
+		this.x = dVMag * Math.cos(newAngle);
+		this.y = dVMag * Math.sin(newAngle);
+
+		return this;
+	};
+
+	/**
+	 * @param {object/Vector3} v
+	 * @returns {number}
+	 */
+	Vector3.prototype.distance = function (v) {
+		// Use a clone so that this is not changed
+		return this.clone().subtract(v).magnitude();
+	};
+
+	Vector3.prototype.magnitude = function () {
+		return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2) + Math.pow(this.z, 2));
+	};
+
+	/**
+	 * @returns {number}
+	 */
+	Vector3.prototype.magnitude2 = function () {
+		return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+	};
+
+	/*
+	 * Subtract x and y of v from this
+	 * @param {object/Vector} v
+	 */
+	Vector3.prototype.subtract2 = function (v) {
+		this.x -= v.x;
+		this.y -= v.y;
+
+		return this;
+	};
+
+	Vector3.prototype.magnitude2 = function () {
+		return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+	};
+
+	Vector3.prototype.distance2 = function (v) {
+		return this.clone().subtract2(v).magnitude2();
+	};
+
+	Vector3.prototype.angle2 = function () {
+		return Math.atan2(this.y, this.x);
+	};
+
+	Vector3.prototype.angleTo2 = function (v) {
+		return v.clone().subtract2(this).angle2();
+	};
+
+	exports.default = Vector3;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function Color(r, g, b, a) {
+		this.r = r;
+		this.g = g;
+		this.b = b;
+		this.a = a;
+	}
+
+	Color.randomInt = function (min, max) {
+		return Math.floor(Math.random() * (max - min + 1) + min);
+	};
+
+	/**
+	 * Returns a random color object
+	 * @param {number} [alpha=1] - alpha value of color
+	 */
+	Color.random = function (alpha) {
+		return new Color(Color.randomInt(0, 255), Color.randomInt(0, 255), Color.randomInt(0, 255), alpha || 1);
+	};
+
+	/**
+	 * @param {boolean} [includeA=true]
+	 */
+	Color.prototype.toString = function (includeA) {
+		var withA = includeA || true;
+
+		if (withA) {
+			return "rgba(" + this.r + ", " + this.g + ", " + this.b + ", " + this.a + ")";
+		}
+
+		return "rgb(" + this.r + ", " + this.g + ", " + this.b + ")";
+	};
+
+	/**
+	 * @param {boolean} [invertA=false]
+	 */
+	Color.prototype.invert = function (invertA) {
+		this.r = 255 - this.r;
+		this.g = 255 - this.g;
+		this.b = 255 - this.b;
+
+		var invertAlpha = invertA || false;
+
+		if (invertAlpha) {
+			this.a = 1 - this.a;
+		}
+	};
+
+	/**
+	 * @param {boolean} [invertA=false]
+	 */
+	Color.prototype.inverse = function (invertA) {
+		var invA = invertA || false;
+
+		if (invA) {
+			return new Color(255 - this.r, 255 - this.g, 255 - this.b, 1 - this.a);
+		}
+
+		return new Color(255 - this.r, 255 - this.g, 255 - this.b, this.a);
+	};
+
+	Color.prototype.clamp = function () {
+		this.r = Math.max(Math.min(this.r, 255), 0);
+		this.g = Math.max(Math.min(this.g, 255), 0);
+		this.b = Math.max(Math.min(this.b, 255), 0);
+
+		this.a = Math.max(Math.min(this.a, 1), 0);
+	};
+
+	/**
+	 * Scale the components of the color
+	 * @param {number} factor - to scale by
+	 * @param {boolean} [scaleA=false]
+	 */
+	Color.prototype.scale = function (factor, scaleA) {
+		var doScaleA = scaleA || false;
+
+		if (doScaleA) {
+			this.a *= factor;
+		}
+
+		this.r *= factor;
+		this.g *= factor;
+		this.b *= factor;
+	};
+
+	Color.prototype.round = function () {
+		this.r = Math.round(this.r);
+		this.g = Math.round(this.g);
+		this.b = Math.round(this.b);
+	};
+
+	Color.prototype.clone = function () {
+		return new Color(this.r, this.g, this.b, this.a);
+	};
+
+	exports.default = Color;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _Flattener = __webpack_require__(4);
+
+	var _Flattener2 = _interopRequireDefault(_Flattener);
+
+	var _DualLooper = __webpack_require__(10);
+
+	var _DualLooper2 = _interopRequireDefault(_DualLooper);
+
+	var _Vector = __webpack_require__(5);
+
+	var _Vector2 = _interopRequireDefault(_Vector);
+
+	var _Vector3 = __webpack_require__(7);
+
+	var _Vector4 = _interopRequireDefault(_Vector3);
+
+	var _Rect = __webpack_require__(6);
+
+	var _Rect2 = _interopRequireDefault(_Rect);
+
+	var _Cuboid = __webpack_require__(11);
+
+	var _Cuboid2 = _interopRequireDefault(_Cuboid);
+
+	var _Barrel = __webpack_require__(13);
+
+	var _Barrel2 = _interopRequireDefault(_Barrel);
+
+	var _Building = __webpack_require__(15);
+
+	var _Building2 = _interopRequireDefault(_Building);
+
+	var _Player = __webpack_require__(16);
+
+	var _Player2 = _interopRequireDefault(_Player);
+
+	var _Color = __webpack_require__(8);
+
+	var _Color2 = _interopRequireDefault(_Color);
+
+	var _SeededRNG = __webpack_require__(17);
+
+	var _SeededRNG2 = _interopRequireDefault(_SeededRNG);
+
+	var _Bullet = __webpack_require__(18);
+
+	var _Bullet2 = _interopRequireDefault(_Bullet);
+
+	var _Rammer = __webpack_require__(19);
+
+	var _Rammer2 = _interopRequireDefault(_Rammer);
+
+	var _ScrollText = __webpack_require__(20);
+
+	var _ScrollText2 = _interopRequireDefault(_ScrollText);
+
+	var _Clamp = __webpack_require__(21);
+
+	var _Clamp2 = _interopRequireDefault(_Clamp);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @param {canvas element} canvas
+	 * @param {2d canvas context} ctx
+	 * @param {object/Keyboard} keyboard
+	 */
+	function Game(o) {
+		this.canvas = o.canvas;
+		this.ctx = o.ctx;
+		this.keyboard = o.keyboard;
+
+		this.keyBinds = {
+			moveForward: 87,
+			moveBackward: 83,
+			strafeRight: 68,
+			strafeLeft: 65,
+			turnRight: 39,
+			turnLeft: 37,
+			shoot: 32
+		};
+
+		this.newSRNG();
+
+		this.flattener = new _Flattener2.default({
+			aspectRatio: this.canvas.width / this.canvas.height
+		});
+
+		this.work = this.mainMenuWork;
+		this.draw = this.mainMenuDraw;
+
+		this.dualLooper = new _DualLooper2.default({
+			regWork: this.work.bind(this),
+			finalWork: this.draw.bind(this)
+		});
+
+		//////////
+
+		this.shootInterval = 350; // Milliseconds
+		this.lastShootTime = 0 - this.shootInterval;
+
+		this.headLevel = 1.8;
+
+		this.playerMoveSpeed = 0.4;
+		this.playerTurnSpeed = 0.019;
+		// this.playerFlySpeed = 0.35;
+
+		this.playerTurnRate = 0;
+		this.playerTurnRateAccel = 0.04;
+
+		//////////
+
+		// Length of barrel not including barrel end
+		this.barrelLength = 1;
+		this.barrelEndLength = 0.15;
+		this.totalBarrelLength = this.barrelLength + this.barrelEndLength;
+
+		this.barrel = new _Barrel2.default({
+			end: new _Rect2.default(new _Vector2.default(-0.1, 0), new _Vector2.default(0.2, this.barrelLength)),
+			topZ: 1.5,
+			botZ: 1.3
+		});
+
+		this.barrelEnd = new _Barrel2.default({
+			end: new _Rect2.default(new _Vector2.default(-0.12, this.barrelLength), new _Vector2.default(0.24, this.barrelEndLength)),
+			topZ: 1.52,
+			botZ: 1.28
+		});
+
+		this.barrelCameraShootY = 0.30;
+		this.barrelCameraRestY = 0.01;
+
+		this.barrelCameraPos = new _Vector4.default(0, this.barrelCameraRestY, this.headLevel);
+
+		this.barrelCameraDir = Math.PI / 2;
+
+		this.bulletSideLength = 0.16;
+		this.bulletHalfSideLength = this.bulletSideLength / 2;
+		this.bulletTopZ = 1.48;
+		this.bulletBotZ = 1.32;
+		this.bulletDim = new _Vector2.default(this.bulletSideLength, this.bulletSideLength);
+
+		this.bulletSpeed = 2;
+
+		this.bulletRemoveDistance = 200;
+
+		this.bulletSmokeIncrease = 0.1;
+		this.maxBulletSmokeAdjustment = 3;
+
+		this.rammerDim = new _Vector2.default(2.1, 2.1);
+		this.rammerTopZ = 1.5;
+		this.rammerBotZ = 0;
+		this.rammerOffsetMin = 0;
+		this.rammerOffsetMax = 0.5;
+		this.rammerOffsetIncreasing = true;
+		this.rammerOffsetSpeed = 0.02;
+		this.rammerMoveSpeed = 0.34;
+
+		this.edgeBuildingDim = new _Vector2.default(10, 10);
+		this.edgeBuildingBotZ = 0;
+		this.edgeBuildingTopZ = 20;
+
+		this.bullets = [];
+		this.bulletSmokes = [];
+		this.rammers = [];
+		this.dyingRammers = [];
+
+		this.rammerShrinkSpeed = 0.055;
+
+		this.nearClippingDistance = 2;
+
+		this.numInjuriesToDie = 3;
+
+		this.dieCallback = function () {
+			console.log("Die");
+		};
+		this.levelEndCallback = function () {
+			console.log("Level end");
+		};
+	}
+
+	Game.prototype.newSRNG = function () {
+		var seed = Math.floor(new Date().getTime() * Math.random());
+
+		// console.log("seed:", seed);
+
+		this.srng = new _SeededRNG2.default(seed);
+	};
+
+	Game.getSurroundingPoints = function (rect, numPerSide) {
+		var xSpacing = rect.dim.x / (numPerSide + 1);
+		var ySpacing = rect.dim.y / (numPerSide + 1);
+
+		var points = [];
+
+		var refPoint = rect.pos;
+
+		// South
+		for (var i = 1; i < numPerSide + 1; ++i) {
+			points.push(refPoint.clone().add(new _Vector2.default(i * xSpacing, 0)));
+		}
+
+		// West
+		for (var i = 1; i < numPerSide + 1; ++i) {
+			points.push(refPoint.clone().add(new _Vector2.default(0, i * ySpacing)));
+		}
+
+		refPoint = rect.pos.clone();
+		refPoint.y += rect.dim.y;
+
+		// North
+		for (var i = 1; i < numPerSide + 1; ++i) {
+			points.push(refPoint.clone().add(new _Vector2.default(i * xSpacing, 0)));
+		}
+
+		refPoint = rect.pos.clone();
+		refPoint.x += rect.dim.x;
+
+		// East
+		for (var i = 1; i < numPerSide + 1; ++i) {
+			points.push(refPoint.clone().add(new _Vector2.default(0, i * ySpacing)));
+		}
+
+		return points;
+	};
+
+	Game.prototype.damagePlayer = function () {
+		this.levelStats.numInjuries += 1;
+
+		this.overlay.a = 0.7;
+
+		if (this.levelStats.numInjuries >= this.numInjuriesToDie) {
+			this.killPlayer();
+		}
+	};
+
+	Game.prototype.killPlayer = function () {
+		if (!this.playerDead) {
+			this.playerDead = true;
+
+			this.dualLooper.stopCallback = function () {
+				this.dyingRammers.forEach(function (rammer) {
+					var playerDistance = rammer.cuboid.end.pos.distance(this.player.pos);
+
+					if (playerDistance < 2.5) {
+						this.dyingRammers.splice(this.dyingRammers.indexOf(rammer), 1);
+					}
+				}.bind(this));
+
+				this.scrollTexts = [];
+
+				document.querySelector('.js-final-balance').innerHTML = Game.getMoneyString(this.score);
+
+				this.draw();
+
+				this.dieCallback();
+			}.bind(this);
+
+			this.stop();
+		}
+	};
+
+	Game.prototype.resetHurtOverlay = function () {
+		this.overlay = new _Color2.default(250, 20, 22, 0);
+	};
+
+	Game.prototype.resetLevelEndOverlay = function () {
+		this.overlay = new _Color2.default(50, 50, 50, 0);
+	};
+
+	Game.prototype.prepLevel = function (lvl) {
+		this.level = lvl;
+
+		this.levelEnding = false;
+
+		if (this.level == 1) {
+			this.score = 0;
+		}
+
+		this.resetHurtOverlay();
+
+		this.levelStats = {
+			rammersKilled: 0,
+			shotsFired: 0,
+			buildingHits: 0,
+			numInjuries: 0
+		};
+
+		this.playerDead = false;
+
+		this.newSRNG();
+
+		this.lastShootTime = 0 - this.shootInterval;
+
+		this.player = new _Player2.default({
+			pos: new _Vector4.default(-19, -19, this.headLevel),
+			dir: Math.PI / 4
+		});
+
+		this.lastPlayerVelocity = _Vector2.default.zero();
+
+		this.playerTurnRate = 0;
+
+		var r = this.srng.randomInt(55, 255);
+		var g = this.srng.randomInt(55, 255);
+		var b = this.srng.randomInt(55, 255);
+		var a = 1;
+
+		var barrelEndTopColor = new _Color2.default(r, g, b, a);
+		var barrelEndSouthColor = barrelEndTopColor.clone();
+		var barrelTopColor = barrelEndTopColor.clone();
+
+		barrelEndSouthColor.scale(0.6, false);
+		barrelEndSouthColor.round();
+
+		barrelTopColor.scale(0.8, false);
+		barrelTopColor.round();
+
+		this.barrelEnd.faces.top.color = barrelEndTopColor;
+		this.barrelEnd.faces.south.color = barrelEndSouthColor;
+		this.barrel.faces.top.color = barrelTopColor;
+
+		this.bullets = [];
+
+		this.bulletSmokes = [];
+
+		this.rammers = [];
+		this.dyingRammers = [];
+
+		this.edgeBuildings = [];
+
+		this.walls = [];
+
+		this.scrollTexts = [];
+
+		// Num of buildings in each row and column
+		var citySize = 3 + 2 * this.level;
+
+		if (citySize > 9) {
+			citySize = 9;
+		}
+
+		this.buildingSpreadMin = 37;
+		this.buildingSpreadMax = 39;
+
+		this.borderRect = new _Rect2.default(new _Vector2.default(-30, -30), new _Vector2.default((citySize - 1) * this.buildingSpreadMax + 60, (citySize - 1) * this.buildingSpreadMax + 60));
+
+		this.areaRect = new _Rect2.default(this.borderRect.pos.clone().add(this.edgeBuildingDim), this.borderRect.dim.clone().subtract(this.edgeBuildingDim));
+
+		this.surroundingPoints = Game.getSurroundingPoints(this.borderRect, 8);
+
+		this.surroundingPoints.forEach(function (point) {
+			var building = new _Building2.default({
+				end: new _Rect2.default(point.clone(), this.edgeBuildingDim.clone()),
+				topZ: this.edgeBuildingTopZ,
+				botZ: this.edgeBuildingBotZ
+			});
+
+			this.edgeBuildings.push(building);
+		}.bind(this));
+
+		for (var x = 0; x < citySize; ++x) {
+			for (var y = 0; y < citySize; ++y) {
+				this.walls.push(new _Building2.default({
+					end: new _Rect2.default(new _Vector2.default(x * this.srng.randomInt(this.buildingSpreadMin, this.buildingSpreadMax), y * this.srng.randomInt(this.buildingSpreadMin, this.buildingSpreadMax)), new _Vector2.default(this.srng.randomInt(10, 12), this.srng.randomInt(10, 12))),
+					topZ: this.srng.randomInt(2, 20),
+					botZ: 0
+				}));
+			}
+		}
+
+		var numRammers = 4 + 2 * this.level;
+
+		if (numRammers > 35) {
+			numRammers = 35;
+		}
+
+		for (var n = 0; n < numRammers; ++n) {
+			var x = this.srng.randomInt(0 * this.buildingSpreadMax, citySize * this.buildingSpreadMax);
+			var y = this.srng.randomInt(0 * this.buildingSpreadMax, citySize * this.buildingSpreadMax);
+
+			var newPos = new _Vector2.default(x, y);
+
+			var collision = true;
+
+			while (collision) {
+				collision = this.walls.some(function (wall) {
+					return newPos.on(wall.end);
+				});
+
+				if (collision) {
+					newPos.y += 1;
+				}
+			}
+
+			this.addRammer(newPos);
+		}
+
+		this.work = this.gameWork;
+		this.draw = this.gameDraw;
+
+		this.dualLooper.regWork = this.work.bind(this);
+		this.dualLooper.finalWork = this.draw.bind(this);
+
+		console.log("Generated city", this.level);
+	};
+
+	Game.prototype.notifyRemainingRobots = function () {
+		// Remove the latest scroll text if it is close enough to overlap the next scroll text
+		if (this.scrollTexts.length > 0) {
+			var latestScrollText = this.scrollTexts[this.scrollTexts.length - 1];
+
+			var pixelDisplacement = latestScrollText.progress * (latestScrollText.textMetrics.width + latestScrollText.canvas.width);
+
+			var selfDisplacements = pixelDisplacement / latestScrollText.textMetrics.width;
+
+			if (selfDisplacements < 1.2) {
+				this.scrollTexts.pop();
+			}
+		}
+
+		var plural;
+		if (this.rammers.length == 1) {
+			plural = "";
+		} else {
+			// 's' needed for 0 -> 0 robots remaining
+			plural = "s";
+		}
+
+		// Add the new scroll text
+		this.scrollTexts.push(new _ScrollText2.default({
+			text: this.rammers.length + ' robot' + plural + ' remaining',
+			canvas: this.canvas,
+			ctx: this.ctx
+		}));
+	};
+
+	Game.prototype.start = function () {
+		this.dualLooper.resetTime();
+		this.dualLooper.start();
+	};
+
+	Game.prototype.stop = function () {
+		this.dualLooper.stop();
+	};
+
+	Game.prototype.resume = function () {
+		this.dualLooper.start();
+	};
+
+	Game.prototype.pause = function () {
+		this.dualLooper.stop();
+	};
+
+	Game.prototype.prepMainMenu = function () {
+		this.newSRNG();
+
+		this.player = new _Player2.default({
+			pos: new _Vector4.default(0, -5, this.headLevel),
+			dir: Math.PI / 2
+		});
+
+		this.mainMenuBuildings = [];
+
+		for (var x = 0; x < 7; ++x) {
+			for (var y = 0; y < 7; ++y) {
+				this.mainMenuBuildings.push(new _Building2.default({
+					end: new _Rect2.default(new _Vector2.default(x * this.srng.randomInt(32, 34), y * this.srng.randomInt(32, 34)), new _Vector2.default(this.srng.randomInt(10, 12), this.srng.randomInt(10, 12))),
+					topZ: this.srng.randomInt(1, 24),
+					botZ: 0
+				}));
+			}
+		}
+
+		// Get list of all building points
+		this.mainMenuBuildingPoints = [];
+
+		var numBuildings = this.mainMenuBuildings.length;
+		for (var i = 0; i < numBuildings; ++i) {
+			var numPoints = this.mainMenuBuildings[i].points.length;
+
+			for (var j = 0; j < numPoints; ++j) {
+				this.mainMenuBuildingPoints.push(this.mainMenuBuildings[i].points[j]);
+			}
+		}
+
+		this.mainMenuAvgPoint = _Vector4.default.average(this.mainMenuBuildingPoints);
+
+		this.mainMenuAvgDist = 0;
+		this.mainMenuAvgHeight = 0;
+
+		var numBuildingPoints = this.mainMenuBuildingPoints.length;
+
+		for (var i = 0; i < numBuildingPoints; ++i) {
+			var currentPoint = this.mainMenuBuildingPoints[i];
+
+			this.mainMenuAvgDist += this.mainMenuAvgPoint.distance2(currentPoint);
+
+			this.mainMenuAvgHeight += currentPoint.z;
+		}
+
+		this.mainMenuAvgDist /= numBuildingPoints;
+		this.mainMenuAvgHeight /= numBuildingPoints;
+
+		this.player.pos.z = this.mainMenuAvgHeight * 6;
+
+		this.mainMenuCameraDist = this.mainMenuAvgDist * 2;
+
+		this.mainMenuAngle = 0;
+
+		this.work = this.mainMenuWork;
+		this.draw = this.mainMenuDraw;
+
+		this.dualLooper.regWork = this.work.bind(this);
+		this.dualLooper.finalWork = this.draw.bind(this);
+	};
+
+	Game.prototype.prepPrepareMenu = function () {
+		this.work = this.prepareMenuWork;
+		this.draw = this.mainMenuDraw;
+
+		this.dualLooper.regWork = this.work.bind(this);
+		this.dualLooper.finalWork = this.draw.bind(this);
+	};
+
+	// The work for the prepare menu
+	Game.prototype.prepareMenuWork = function () {
+		this.mainMenuAngle += 0.001;
+
+		this.mainMenuAngle %= Math.PI * 2;
+
+		var radius = Math.sin(2 * this.mainMenuAngle) + Math.cos(4 * this.mainMenuAngle);
+		radius = Math.abs(radius);
+		radius *= this.mainMenuCameraDist;
+
+		var newX = this.mainMenuAvgPoint.x + Math.cos(this.mainMenuAngle) * radius;
+		var newY = this.mainMenuAvgPoint.y + Math.sin(this.mainMenuAngle) * radius;
+
+		// this.player.pos.x = newX;
+		// this.player.pos.y = newY;
+
+		var proportion = 0.005;
+
+		this.player.pos.x += (newX - this.player.pos.x) * proportion;
+		this.player.pos.y += (newY - this.player.pos.y) * proportion;
+
+		this.player.dir = this.mainMenuAngle + Math.PI;
+
+		return true;
+	};
+
+	Game.prototype.mainMenuWork = function () {
+		this.mainMenuAngle += 0.001;
+
+		this.mainMenuAngle %= Math.PI * 2;
+
+		var newX = this.mainMenuAvgPoint.x + Math.cos(this.mainMenuAngle) * this.mainMenuCameraDist;
+		var newY = this.mainMenuAvgPoint.y + Math.sin(this.mainMenuAngle) * this.mainMenuCameraDist;
+
+		this.player.pos.x = newX;
+		this.player.pos.y = newY;
+
+		this.player.dir = this.mainMenuAngle + Math.PI;
+
+		return true;
+	};
+
+	Game.prototype.mainMenuDraw = function () {
+		this.ctx.save();
+		this.ctx.scale(this.canvas.width, this.canvas.height);
+
+		this.ctx.fillStyle = '#7EC0EE';
+		this.ctx.fillRect(0, 0, 1, 0.5);
+		this.ctx.fillStyle = '#4DBD33';
+		this.ctx.fillRect(0, 0.5, 1, 0.5);
+		this.ctx.restore();
+
+		//////////
+
+		this.clearFaces();
+
+		var numWalls = this.mainMenuBuildings.length;
+		for (var i = 0; i < numWalls; ++i) {
+			this.addCuboidishFaces(this.mainMenuBuildings[i]);
+		}
+
+		var numFaces = this.faces.length;
+		for (var i = 0; i < numFaces; ++i) {
+			this.flattener.fillShape(this.canvas, this.ctx, this.flattener.getPoints2D(this.player.pos, this.player.dir, this.faces[i].points), this.faces[i].color.toString(true));
+		}
+	};
+
+	Game.getSignedMoneyString = function (num) {
+		var sign;
+		if (num < 0) {
+			sign = '-';
+		} else {
+			sign = '+';
+		}
+
+		return sign + '€' + String(Math.abs(num));
+	};
+
+	Game.getMoneyString = function (num) {
+		var sign;
+		if (num < 0) {
+			sign = '-';
+		} else {
+			sign = '';
+		}
+
+		return sign + '€' + String(Math.abs(num));
+	};
+
+	Game.prototype.endLevel = function () {
+		this.rammerKillMoney = 110;
+		this.firedShotMoney = -10;
+		this.damageBuildingMoney = -20;
+		this.injuryMoney = -110;
+
+		this.dualLooper.stopCallback = function () {
+			document.querySelector('.js-robots-killed').innerHTML = this.levelStats.rammersKilled;
+			var newRammerKillMoney = this.levelStats.rammersKilled * this.rammerKillMoney;
+			document.querySelector('.js-robots-killed-money').innerHTML = Game.getSignedMoneyString(newRammerKillMoney);
+			this.score += newRammerKillMoney;
+
+			document.querySelector('.js-shots-fired').innerHTML = this.levelStats.shotsFired;
+			var newShotsFiredMoney = this.levelStats.shotsFired * this.firedShotMoney;
+			document.querySelector('.js-shots-fired-money').innerHTML = Game.getSignedMoneyString(newShotsFiredMoney);
+			this.score += newShotsFiredMoney;
+
+			document.querySelector('.js-building-damage').innerHTML = this.levelStats.buildingHits;
+			var newBuildingDamageMoney = this.levelStats.buildingHits * this.damageBuildingMoney;
+
+			var bdText;
+			if (newBuildingDamageMoney == 0) {
+				bdText = '-€0';
+			} else {
+				bdText = Game.getSignedMoneyString(newBuildingDamageMoney);
+			}
+
+			document.querySelector('.js-building-damage-money').innerHTML = bdText;
+			this.score += newBuildingDamageMoney;
+
+			document.querySelector('.js-injuries').innerHTML = this.levelStats.numInjuries;
+			var newInjuriesMoney = this.levelStats.numInjuries * this.injuryMoney;
+
+			var injText;
+			if (newInjuriesMoney == 0) {
+				injText = '-€0';
+			} else {
+				injText = Game.getSignedMoneyString(newInjuriesMoney);
+			}
+
+			document.querySelector('.js-injuries-money').innerHTML = injText;
+			this.score += newInjuriesMoney;
+
+			document.querySelector('.js-current-balance').innerHTML = Game.getMoneyString(this.score);
+
+			this.levelEndCallback();
+		}.bind(this);
+
+		this.stop();
+	};
+
+	Game.prototype.rammerDeath = function () {
+		if (this.levelStats.numInjuries >= this.numInjuriesToDie) {
+			this.killPlayer();
+		} else if (this.rammers.length == 0) {
+			this.resetLevelEndOverlay();
+			this.levelEnding = true;
+
+			console.log('City ' + this.level + ' cleared!');
+		} else {
+			this.notifyRemainingRobots();
+		}
+	};
+
+	Game.prototype.gameWork = function () {
+		this.scrollTexts.forEach(function (scrollText) {
+			scrollText.move();
+
+			if (scrollText.doneMoving) {
+				this.scrollTexts.splice(this.scrollTexts.indexOf(scrollText), 1);
+			}
+		}.bind(this));
+
+		if (this.levelEnding) {
+			this.overlay.a += 0.003;
+
+			if (this.overlay.a > 0.6) {
+				this.endLevel();
+			}
+		} else {
+			this.overlay.a -= 0.004;
+
+			if (this.overlay.a < 0) {
+				this.overlay.a = 0;
+			}
+		}
+
+		var turn = 0;
+
+		if (this.keyboard.keydown[this.keyBinds.turnRight]) {
+			// this.player.dir -= this.playerTurnSpeed;
+
+			turn -= 1;
+		}
+		if (this.keyboard.keydown[this.keyBinds.turnLeft]) {
+			// this.player.dir += this.playerTurnSpeed;
+
+			turn += 1;
+		}
+
+		if (turn != 0) {
+			this.playerTurnRate += this.playerTurnRateAccel;
+
+			this.playerTurnRate = (0, _Clamp2.default)(this.playerTurnRate, 0, 1);
+
+			this.player.dir += turn * this.playerTurnRate * this.playerTurnSpeed;
+		} else {
+			this.playerTurnRate -= this.playerTurnRateAccel;
+
+			this.playerTurnRate = (0, _Clamp2.default)(this.playerTurnRate, 0, 1);
+		}
+
+		var inputVector = _Vector2.default.zero();
+
+		if (this.keyboard.keydown[this.keyBinds.moveForward]) {
+			inputVector.x += 1;
+		}
+		if (this.keyboard.keydown[this.keyBinds.moveBackward]) {
+			inputVector.x -= 1;
+		}
+		if (this.keyboard.keydown[this.keyBinds.strafeRight]) {
+			inputVector.y -= 1;
+		}
+		if (this.keyboard.keydown[this.keyBinds.strafeLeft]) {
+			inputVector.y += 1;
+		}
+
+		if (inputVector.magnitude() > 0) {
+			// What to add to the old position to get the new position
+			var newPosDiff = inputVector.clone().setMagnitude(this.playerMoveSpeed);
+			newPosDiff.rotate(_Vector2.default.zero(), this.player.dir);
+
+			var newPos = newPosDiff.clone().add(this.player.pos);
+
+			var collision = this.walls.some(function (wall) {
+				return newPos.on(wall.end);
+			}) || !newPos.on(this.areaRect);
+
+			if (!collision) {
+				this.player.pos.x = newPos.x;
+				this.player.pos.y = newPos.y;
+
+				this.lastPlayerVelocity = newPosDiff;
+			} else {
+				this.lastPlayerVelocity = _Vector2.default.zero();
+			}
+		} else {
+			this.lastPlayerVelocity = _Vector2.default.zero();
+		}
+
+		// if (this.keyboard.keydown[this.keyBinds.jump]) {
+		// 	this.player.pos.z += this.playerFlySpeed;
+		// }
+		// else {
+		// 	this.player.pos.z -= this.playerFlySpeed;
+		// }
+		//
+		// if (this.player.pos.z < this.headLevel) {
+		// 	this.player.pos.z = this.headLevel;
+		// }
+
+		this.barrelCameraPos.y += (this.barrelCameraRestY - this.barrelCameraPos.y) * 0.038;
+
+		this.bullets.forEach(function (bullet) {
+			bullet.cuboid.end.pos.add(bullet.velocity);
+
+			var roughBulletPlayerDistance = this.player.pos.distance2(bullet.cuboid.end.pos);
+
+			var tooFarAway = roughBulletPlayerDistance > this.bulletRemoveDistance;
+
+			if (tooFarAway) {
+				this.bullets.splice(this.bullets.indexOf(bullet), 1);
+			} else {
+				var hitRammer;
+				var hitEnemy = this.rammers.some(function (rammer) {
+					hitRammer = rammer;
+
+					return rammer.cuboid.end.overlaps(bullet.cuboid.end);
+				}.bind(this));
+
+				if (hitEnemy) {
+					this.bulletToSmoke(bullet);
+
+					this.killRammer(hitRammer);
+
+					console.log("Number of robots left:", this.rammers.length);
+
+					this.rammerDeath();
+				} else {
+					var hitWall = this.walls.some(function (wall) {
+						return wall.end.overlaps(bullet.cuboid.end);
+					});
+
+					if (hitWall) {
+						this.levelStats.buildingHits += 1;
+
+						this.bulletToSmoke(bullet);
+					} else {
+						bullet.cuboid.update();
+					}
+				}
+			}
+		}.bind(this));
+
+		if (this.keyboard.keydown[this.keyBinds.shoot]) {
+			this.shoot();
+		}
+
+		this.bulletSmokes.forEach(function (bulletSmoke) {
+			bulletSmoke.cuboid.adjustDimensions(this.bulletSmokeIncrease);
+
+			if (bulletSmoke.cuboid.netAdjustments > this.maxBulletSmokeAdjustment) {
+				this.bulletSmokes.splice(this.bulletSmokes.indexOf(bulletSmoke), 1);
+			} else {
+				bulletSmoke.cuboid.update();
+			}
+		}.bind(this));
+
+		this.rammers.forEach(function (rammer) {
+			var hitPlayer = this.player.pos.clone2().inside(rammer.cuboid.end);
+
+			if (hitPlayer) {
+				this.damagePlayer();
+
+				this.dieRammer(rammer);
+
+				this.rammerDeath();
+			} else {
+				var toPlayer = this.player.pos.clone2().subtract(rammer.cuboid.end.dim.clone().scale(0.5)).subtract(rammer.cuboid.end.pos).setMagnitude(rammer.moveSpeed);
+
+				var newPos = rammer.cuboid.end.pos.clone().add(toPlayer);
+
+				var collision = this.walls.some(function (wall) {
+					return newPos.on(wall.end);
+				});
+
+				if (!collision) {
+					rammer.cuboid.end.pos = newPos;
+				}
+
+				rammer.oscillate();
+			}
+		}.bind(this));
+
+		this.dyingRammers.forEach(function (rammer) {
+			rammer.cuboid.adjustDimensions(-this.rammerShrinkSpeed);
+
+			if (rammer.cuboid.topZ < rammer.cuboid.botZ) {
+				this.dyingRammers.splice(this.dyingRammers.indexOf(rammer), 1);
+			} else {
+				rammer.cuboid.update();
+			}
+		}.bind(this));
+
+		return true;
+	};
+
+	Game.prototype.gameDraw = function () {
+		// this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+		this.ctx.save();
+		this.ctx.scale(this.canvas.width, this.canvas.height);
+
+		this.ctx.fillStyle = '#7EC0EE';
+		this.ctx.fillRect(0, 0, 1, 0.5);
+		this.ctx.fillStyle = '#4DBD33';
+		this.ctx.fillRect(0, 0.5, 1, 0.5);
+		this.ctx.restore();
+
+		//////////
+
+		this.clearFaces();
+
+		var numWalls = this.walls.length;
+		for (var i = 0; i < numWalls; ++i) {
+			this.addCuboidishFaces(this.walls[i]);
+		}
+
+		var numEdgeBuildings = this.edgeBuildings.length;
+		for (var i = 0; i < numEdgeBuildings; ++i) {
+			this.addCuboidishFaces(this.edgeBuildings[i]);
+		}
+
+		var numBullets = this.bullets.length;
+		for (var i = 0; i < numBullets; ++i) {
+			this.addCuboidishFaces(this.bullets[i].cuboid);
+		}
+
+		var numBulletSmokes = this.bulletSmokes.length;
+		for (var i = 0; i < numBulletSmokes; ++i) {
+			this.addCuboidishFaces(this.bulletSmokes[i].cuboid);
+		}
+
+		var numRammers = this.rammers.length;
+		for (var i = 0; i < numRammers; ++i) {
+			this.addCuboidishFaces(this.rammers[i].cuboid);
+		}
+
+		var numDyingRammers = this.dyingRammers.length;
+		for (var i = 0; i < numDyingRammers; ++i) {
+			this.addCuboidishFaces(this.dyingRammers[i].cuboid);
+		}
+
+		var numFaces = this.faces.length;
+		for (var i = 0; i < numFaces; ++i) {
+			this.drawFace(this.faces[i]);
+		}
+
+		for (var prop in this.barrelEnd.faces) {
+			this.flattener.fillShape(this.canvas, this.ctx, this.flattener.getPoints2D(this.barrelCameraPos, this.barrelCameraDir, this.barrelEnd.faces[prop].points), this.barrelEnd.faces[prop].color.toString(true));
+		}
+
+		for (var prop in this.barrel.faces) {
+			this.flattener.fillShape(this.canvas, this.ctx, this.flattener.getPoints2D(this.barrelCameraPos, this.barrelCameraDir, this.barrel.faces[prop].points), this.barrel.faces[prop].color.toString(true));
+		}
+
+		this.scrollTexts.forEach(function (scrollText) {
+			scrollText.draw();
+		});
+
+		this.ctx.save();
+		this.ctx.scale(this.canvas.width, this.canvas.height);
+
+		this.ctx.fillStyle = this.overlay.toString();
+		this.ctx.fillRect(0, 0, 1, 1);
+		this.ctx.restore();
+
+		/* * /
+	 // Debug info
+	 	var fontSize = 12;
+	 var fontMargin = 4;
+	 	var debugItems = [];
+	 	debugItems.push({
+	 	label: "this.player.pos",
+	 	value: `${this.player.pos.x.toFixed(4)} ${this.player.pos.y.toFixed(4)}`
+	 });
+	 	debugItems.push({
+	 	label: "this.player.dir",
+	 	value: `${(this.player.dir / Math.PI * 180 % 360).toFixed(4)} degrees (${this.player.dir.toFixed(4)})`
+	 });
+	 	debugItems.push({
+	 	label: "this.bullets.length",
+	 	value: `${this.bullets.length}`
+	 });
+	 	debugItems.push({
+	 	label: "this.bulletSmokes.length",
+	 	value: `${this.bulletSmokes.length}`
+	 });
+	 	debugItems.push({
+	 	label: "this.scrollTexts.length",
+	 	value: `${this.scrollTexts.length}`
+	 });
+	 	this.ctx.save();
+	 	this.ctx.font = `${fontSize}px Arial`;
+	 	this.ctx.textBaseline = 'bottom';
+	 		for (var i = 0; i < debugItems.length; ++i) {
+	 		var tx = fontMargin;
+	 		var ty = this.canvas.height - ((i + 1) * fontMargin) - (i * fontSize);
+	 			this.ctx.fillText(`${debugItems[i].label}: ${debugItems[i].value}`, tx, ty);
+	 	}
+	 this.ctx.restore();
+	 	/* */
+	};
+
+	Game.prototype.drawFace = function (face) {
+		this.flattener.fillShape(this.canvas, this.ctx, this.flattener.getPoints2D(this.player.pos, this.player.dir, face.points), face.color.toString(true));
+	};
+
+	Game.prototype.clearFaces = function () {
+		this.faces = [];
+	};
+
+	/**
+	 * @param {object/Face} face
+	 * - @property {number} avgPointPlayerDist
+	 */
+	Game.prototype.insertFace = function (face) {
+		var placed = false;
+
+		for (var i = 0; i < this.faces.length; ++i) {
+			if (face.avgPointPlayerDist > this.faces[i].avgPointPlayerDist) {
+				this.faces.splice(i, 0, face);
+
+				placed = true;
+
+				break;
+			}
+		}
+
+		if (!placed) {
+			this.faces.push(face);
+		}
+	};
+
+	Game.prototype.faceNotVisible = function (face) {
+		return _Flattener2.default.allPointsBehind(this.player.pos, this.player.dir, face.points);
+	};
+
+	Game.prototype.addFace = function (face) {
+		var notInView = this.faceNotVisible(face);
+
+		if (!notInView) {
+			face.avgPointPlayerDist = face.avgPoint.distance(this.player.pos);
+
+			this.insertFace(face);
+		}
+	};
+
+	Game.prototype.addCuboidishFaces = function (cuboidish) {
+		for (var prop in cuboidish.faces) {
+			this.addFace(cuboidish.faces[prop]);
+		}
+	};
+
+	Game.prototype.shoot = function () {
+		if (this.dualLooper.totalTime - this.lastShootTime > this.shootInterval) {
+			// console.log("shoot");
+
+			this.levelStats.shotsFired += 1;
+
+			this.barrelCameraPos.y = this.barrelCameraShootY;
+
+			var bulletStartPos = this.player.pos.clone2();
+			bulletStartPos.x -= this.bulletHalfSideLength;
+			bulletStartPos.y -= this.bulletHalfSideLength;
+
+			var bulletStartPosAddition = _Vector2.default.fromAngle(this.player.dir).setMagnitude(this.totalBarrelLength);
+
+			bulletStartPos.add(bulletStartPosAddition);
+
+			var newBullet = new _Bullet2.default({
+				end: new _Rect2.default(bulletStartPos, this.bulletDim.clone()),
+				topZ: this.bulletTopZ,
+				botZ: this.bulletBotZ,
+				velocity: _Vector2.default.fromAngle(this.player.dir).setMagnitude(this.bulletSpeed).add(this.lastPlayerVelocity)
+			});
+
+			this.bullets.push(newBullet);
+
+			this.lastShootTime = this.dualLooper.totalTime;
+		}
+	};
+
+	Game.prototype.bulletToSmoke = function (bullet) {
+		this.bullets.splice(this.bullets.indexOf(bullet), 1);
+
+		this.bulletSmokes.push(bullet);
+
+		var colorComponents = this.srng.randomInt(220, 252);
+		var alpha = this.srng.randomInRange(0.3, 0.65);
+
+		var color = new _Color2.default(colorComponents, colorComponents, colorComponents, alpha);
+
+		for (var prop in bullet.cuboid.faces) {
+			var newColor = color.clone();
+
+			newColor.scale(this.srng.randomInRange(0.85, 1));
+			newColor.round();
+
+			bullet.cuboid.faces[prop].color = newColor;
+		}
+	};
+
+	Game.prototype.addRammer = function (pos) {
+		var initialOffset = this.srng.randomInRange(this.rammerOffsetMin, this.rammerOffsetMax);
+
+		var rammer = new _Rammer2.default({
+			end: new _Rect2.default(pos, this.rammerDim.clone()),
+			topZ: this.rammerTopZ,
+			botZ: this.rammerBotZ,
+			offsetMin: this.rammerOffsetMin,
+			offsetMax: this.rammerOffsetMax,
+			initialOffset: initialOffset,
+			offsetIncreasing: this.rammerOffsetIncreasing,
+			offsetSpeed: this.rammerOffsetSpeed,
+			moveSpeed: this.rammerMoveSpeed
+		});
+
+		this.rammers.push(rammer);
+	};
+
+	Game.prototype.killRammer = function (rammer) {
+		this.levelStats.rammersKilled += 1;
+
+		this.dieRammer(rammer);
+	};
+
+	Game.prototype.dieRammer = function (rammer) {
+		this.rammers.splice(this.rammers.indexOf(rammer), 1);
+
+		this.dyingRammers.push(rammer);
+	};
+
+	exports.default = Game;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	/**
+	 * @param {object} o
+	 * - @property {array of functions} regWork
+	 * - @property {array of functions} finalWork
+	 * - @property {function} [stopCallback=function() {}]
+	 * - @property {number} [interval] - milliseconds
+	 * - @property {number} [maxNumIntervals]
+	 */
+	function DualLooper(o) {
+		this.regWork = o.regWork;
+		this.finalWork = o.finalWork;
+
+		this.stopCallback = o.stopCallback || function () {};
+
+		this.interval = o.interval || DualLooper.default.interval;
+		this.maxNumIntervals = o.maxNumIntervals || DualLooper.default.maxNumIntervals;
+
+		this.time = 0;
+		this.totalTime = 0;
+
+		this.looping = false;
+		this.stopped = true;
+
+		this.loopCallBound = this.loopCall.bind(this);
+	}
+
+	DualLooper.default = {
+		interval: 8,
+		maxNumIntervals: 4
+	};
+
+	//////////
+
+	DualLooper.prototype.accumulate = function (dt) {
+		this.time += dt;
+		this.totalTime += dt;
+	};
+
+	DualLooper.prototype.loopCall = function () {
+		this.newTime = new Date().getTime();
+		this.dt = this.newTime - this.oldTime;
+
+		this.accumulate(this.dt);
+
+		var potentialIntervals = Math.floor(this.time / this.interval);
+		var runIntervals = Math.min(potentialIntervals, this.maxNumIntervals);
+
+		//////////
+
+		var i;
+		for (i = 0; i < runIntervals; ++i) {
+			var keepGoing = this.regWork();
+
+			// `!foo` where foo is undefined is true
+			if (!keepGoing) {
+				// Since the ++i is skipped
+				i += 1;
+
+				break;
+			}
+		}
+
+		if (i > 0) {
+			this.time -= i * this.interval;
+			this.finalWork();
+		}
+
+		//////////
+
+		this.oldTime = this.newTime;
+
+		if (this.looping) {
+			window.requestAnimationFrame(this.loopCallBound);
+		} else {
+			this.stopped = true;
+
+			this.stopCallback();
+		}
+	};
+
+	//////////
+
+	DualLooper.prototype.start = function () {
+		if (this.stopped) {
+			this.oldTime = new Date().getTime();
+
+			this.looping = true;
+			this.stopped = false;
+
+			this.loopCallBound();
+		}
+	};
+
+	DualLooper.prototype.stop = function () {
+		this.looping = false;
+	};
+
+	DualLooper.prototype.clearTime = function () {
+		this.time = 0;
+	};
+
+	DualLooper.prototype.resetTime = function () {
+		this.time = 0;
+		this.totalTime = 0;
+	};
+
+	exports.default = DualLooper;
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _Vector = __webpack_require__(7);
+
+	var _Vector2 = _interopRequireDefault(_Vector);
+
+	var _Face = __webpack_require__(12);
+
+	var _Face2 = _interopRequireDefault(_Face);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @param {object} o
+	 * - @property {object/Rect} end
+	 * - @property {number} topZ
+	 * - @property {number} botZ
+	 */
+	function Cuboid(o) {
+		this.end = o.end;
+		this.topZ = o.topZ;
+		this.botZ = o.botZ;
+
+		this.netAdjustments = 0;
+
+		this.generatePoints();
+
+		this.generateFaces();
+	}
+
+	Cuboid.prototype.generatePoints = function () {
+		this.points = [];
+
+		this.points.push(new _Vector2.default(this.end.pos.x, this.end.pos.y, this.topZ), new _Vector2.default(this.end.pos.x + this.end.dim.x, this.end.pos.y, this.topZ), new _Vector2.default(this.end.pos.x + this.end.dim.x, this.end.pos.y + this.end.dim.y, this.topZ), new _Vector2.default(this.end.pos.x, this.end.pos.y + this.end.dim.y, this.topZ));
+
+		for (var i = 0; i < 4; ++i) {
+			var ref = this.points[i];
+
+			this.points.push(new _Vector2.default(ref.x, ref.y, this.botZ));
+		}
+	};
+
+	Cuboid.prototype.generateFaces = function () {
+		this.faces = {
+			top: new _Face2.default([this.points[0], this.points[1], this.points[2], this.points[3]]),
+			bot: new _Face2.default([this.points[4], this.points[5], this.points[6], this.points[7]]),
+			north: new _Face2.default([this.points[2], this.points[3], this.points[7], this.points[6]]),
+			east: new _Face2.default([this.points[1], this.points[2], this.points[6], this.points[5]]),
+			south: new _Face2.default([this.points[0], this.points[1], this.points[5], this.points[4]]),
+			west: new _Face2.default([this.points[3], this.points[0], this.points[4], this.points[7]])
+		};
+	};
+
+	Cuboid.facePointIndexes = {
+		top: [0, 1, 2, 3],
+		bot: [4, 5, 6, 7],
+		north: [2, 3, 7, 6],
+		east: [1, 2, 6, 5],
+		south: [0, 1, 5, 4],
+		west: [3, 0, 4, 7]
+	};
+
+	Cuboid.prototype.getFacePoints = function (faceName) {
+		var points = [];
+
+		for (var i = 0; i < 4; ++i) {
+			var index = Cuboid.facePointIndexes[faceName][i];
+
+			points.push(this.points[index]);
+		}
+
+		return points;
+	};
+
+	Cuboid.prototype.updateFacePoints = function () {
+		for (var prop in this.faces) {
+			this.faces[prop].points = this.getFacePoints(prop);
+
+			this.faces[prop].update();
+		}
+	};
+
+	Cuboid.prototype.adjustDimensions = function (units) {
+		this.netAdjustments += units;
+
+		var halfUnits = units / 2;
+
+		this.topZ += halfUnits;
+		this.botZ -= halfUnits;
+
+		this.end.pos.x -= halfUnits;
+		this.end.pos.y -= halfUnits;
+
+		this.end.dim.x += units;
+		this.end.dim.y += units;
+	};
+
+	Cuboid.prototype.update = function () {
+		this.generatePoints();
+
+		this.updateFacePoints();
+	};
+
+	exports.default = Cuboid;
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _Vector = __webpack_require__(7);
+
+	var _Vector2 = _interopRequireDefault(_Vector);
+
+	var _Color = __webpack_require__(8);
+
+	var _Color2 = _interopRequireDefault(_Color);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @param {array of Vector3} points
+	 * @param {object/Color} color
+	 */
+	function Face(points, color) {
+		this.points = points;
+
+		this.color = color || _Color2.default.random(1);
+
+		this.update();
+	}
+
+	Face.prototype.update = function () {
+		this.avgPoint = _Vector2.default.average(this.points);
+	};
+
+	exports.default = Face;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _Cuboid = __webpack_require__(11);
+
+	var _Cuboid2 = _interopRequireDefault(_Cuboid);
+
+	var _Face = __webpack_require__(12);
+
+	var _Face2 = _interopRequireDefault(_Face);
+
+	var _DirFace = __webpack_require__(14);
+
+	var _DirFace2 = _interopRequireDefault(_DirFace);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function Barrel(o) {
+		_Cuboid2.default.call(this, o);
+	}
+
+	Barrel.prototype = Object.create(_Cuboid2.default.prototype);
+
+	Barrel.prototype.generateFaces = function () {
+		this.faces = {
+			east: new _Face2.default([this.points[1], this.points[2], this.points[6], this.points[5]]),
+			west: new _Face2.default([this.points[3], this.points[0], this.points[4], this.points[7]]),
+			south: new _Face2.default([this.points[0], this.points[1], this.points[5], this.points[4]]),
+			top: new _Face2.default([this.points[0], this.points[1], this.points[2], this.points[3]])
+		};
+	};
+
+	exports.default = Barrel;
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _Vector = __webpack_require__(7);
+
+	var _Vector2 = _interopRequireDefault(_Vector);
+
+	var _Color = __webpack_require__(8);
+
+	var _Color2 = _interopRequireDefault(_Color);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @param {object} o
+	 * - @property {array of Vector3} points
+	 * - @property {number} dir
+	 * - @property {object/Color} [color]
+	 */
+	function DirFace(o) {
+	  this.points = o.points;
+
+	  this.dir = o.dir;
+
+	  this.avgPoint = _Vector2.default.average(this.points);
+
+	  this.color = o.color || _Color2.default.random(1);
+	}
+
+	exports.default = DirFace;
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _Cuboid = __webpack_require__(11);
+
+	var _Cuboid2 = _interopRequireDefault(_Cuboid);
+
+	var _Face = __webpack_require__(12);
+
+	var _Face2 = _interopRequireDefault(_Face);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function Building(o) {
+		_Cuboid2.default.call(this, o);
+	}
+
+	Building.prototype = Object.create(_Cuboid2.default.prototype);
+
+	Building.prototype.generateFaces = function () {
+		this.faces = {
+			top: new _Face2.default([this.points[0], this.points[1], this.points[2], this.points[3]]),
+			north: new _Face2.default([this.points[2], this.points[3], this.points[7], this.points[6]]),
+			east: new _Face2.default([this.points[1], this.points[2], this.points[6], this.points[5]]),
+			south: new _Face2.default([this.points[0], this.points[1], this.points[5], this.points[4]]),
+			west: new _Face2.default([this.points[3], this.points[0], this.points[4], this.points[7]])
+		};
+	};
+
+	exports.default = Building;
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _Vector = __webpack_require__(5);
+
+	var _Vector2 = _interopRequireDefault(_Vector);
+
+	var _Vector3 = __webpack_require__(7);
+
+	var _Vector4 = _interopRequireDefault(_Vector3);
+
+	var _Rect = __webpack_require__(6);
+
+	var _Rect2 = _interopRequireDefault(_Rect);
+
+	var _Face = __webpack_require__(12);
+
+	var _Face2 = _interopRequireDefault(_Face);
+
+	var _Barrel = __webpack_require__(13);
+
+	var _Barrel2 = _interopRequireDefault(_Barrel);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @param {object} o
+	 * - @property {object/Vector3} [pos]
+	 * - @property {number} [dir]
+	 */
+	function Player(o) {
+	  this.pos = o.pos || _Vector4.default.zero();
+	  this.dir = o.dir || 0;
+	}
+
+	exports.default = Player;
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	/**
+	 * @param {number} [seed]
+	 */
+	function SeededRNG(seed) {
+	  this.seed = seed || 10;
+	}
+
+	/*
+	 * Returns value in [0, 1)
+	 */
+	SeededRNG.prototype.random = function () {
+	  this.seed += 1;
+
+	  var x = Math.sin(this.seed) * 100000;
+
+	  return x - Math.floor(x);
+	};
+
+	/**
+	 * Returns value in [min, max]
+	 */
+	SeededRNG.prototype.randomInt = function (min, max) {
+	  return Math.floor(this.random() * (max - min + 1)) + min;
+	};
+
+	/**
+	 * Returns value in [min, max)
+	 */
+	SeededRNG.prototype.randomInRange = function (min, max) {
+	  return this.random() * (max - min) + min;
+	};
+
+	exports.default = SeededRNG;
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _Vector = __webpack_require__(5);
+
+	var _Vector2 = _interopRequireDefault(_Vector);
+
+	var _Cuboid = __webpack_require__(11);
+
+	var _Cuboid2 = _interopRequireDefault(_Cuboid);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @param {object} o
+	 * - @property {object/Rect} end
+	 * - @property {number} topZ
+	 * - @property {number} botZ
+	 * - @property {object/Vector2} [velocity]
+	 */
+	function Bullet(o) {
+	  this.cuboid = new _Cuboid2.default(o);
+
+	  this.velocity = o.velocity || _Vector2.default.zero();
+	}
+
+	exports.default = Bullet;
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _Vector = __webpack_require__(5);
+
+	var _Vector2 = _interopRequireDefault(_Vector);
+
+	var _Cuboid = __webpack_require__(11);
+
+	var _Cuboid2 = _interopRequireDefault(_Cuboid);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @param {object} o
+	 * - @property {object/Rect} end
+	 * - @property {number} topZ
+	 * - @property {number} botZ
+	 * - @property {number} offsetMin
+	 * - @property {number} offsetMax
+	 * - @property {number} initialOffset
+	 * - @property {boolean} [offsetIncreasing]
+	 * - @property {number} [offsetSpeed]
+	 * - @property {number} [moveSpeed]
+	 */
+	function Rammer(o) {
+		this.cuboid = new _Cuboid2.default(o);
+
+		this.topZ = o.topZ;
+		this.botZ = o.botZ;
+
+		this.offsetMin = o.offsetMin;
+		this.offsetMax = o.offsetMax;
+
+		this.offset = o.initialOffset;
+		this.offsetIncreasing = o.offsetIncreasing || true;
+
+		this.offsetSpeed = o.offsetSpeed || 1;
+		this.moveSpeed = o.moveSpeed || 1;
+	}
+
+	Rammer.prototype.oscillate = function () {
+		if (this.offsetIncreasing) {
+			this.offset += this.offsetSpeed;
+
+			// Not perfect
+			if (this.offset >= this.offsetMax) {
+				this.offset -= this.offset - this.offsetMax;
+
+				this.offsetIncreasing = false;
+			}
+
+			this.cuboid.topZ = this.topZ + this.offset;
+			this.cuboid.botZ = this.botZ + this.offset;
+
+			this.cuboid.update();
+		} else {
+			this.offset -= this.offsetSpeed;
+
+			// Not perfect
+			if (this.offset <= this.offsetMin) {
+				this.offset += this.offsetMin - this.offset;
+
+				this.offsetIncreasing = true;
+			}
+
+			this.cuboid.topZ = this.topZ + this.offset;
+			this.cuboid.botZ = this.botZ + this.offset;
+
+			this.cuboid.update();
+		}
+	};
+
+	exports.default = Rammer;
+
+/***/ },
+/* 20 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	/**
+	 * @param {object} o
+	 * - @property {string} text
+	 * - @property {HTML canvas} canvas
+	 * - @property {2d context} ctx
+	 * - @property {number} [fontSize]
+	 * - @property {string} [fontFamily]
+	 * - @property {number} [speed]
+	 */
+	function ScrollText(o) {
+		this.text = o.text;
+		this.canvas = o.canvas;
+		this.ctx = o.ctx;
+
+		this.fontSize = o.fontSize || 16;
+		this.fontFamily = o.fontFamily || 'sans-serif';
+
+		this.ctxFont = this.getCtxFont();
+		this.textMetrics = this.getTextMetrics();
+
+		this.speed = o.speed || 0.001;
+
+		this.progress = 0;
+
+		this.doneMoving = false;
+	}
+
+	ScrollText.prototype.getCtxFont = function () {
+		return String(this.fontSize) + 'px ' + this.fontFamily;
+	};
+
+	ScrollText.prototype.getTextMetrics = function () {
+		this.ctx.save();
+		this.ctx.font = this.ctxFont;
+
+		var textMetrics = this.ctx.measureText(this.text);
+		this.ctx.restore();
+
+		return textMetrics;
+	};
+
+	ScrollText.prototype.draw = function () {
+		this.ctx.save();
+		this.ctx.translate(-this.textMetrics.width, this.fontSize);
+		this.ctx.translate(this.progress * (this.canvas.width + this.textMetrics.width), 0);
+
+		this.ctx.textBaseline = 'top';
+		this.ctx.font = this.ctxFont;
+		this.ctx.fillStyle = '#fff';
+		this.ctx.fillText(this.text, 0, 0);
+		this.ctx.restore();
+	};
+
+	ScrollText.prototype.move = function () {
+		if (this.progress < 1) {
+			this.progress += this.speed;
+		} else if (this.progress > 0.99) {
+			this.doneMoving = true;
+		}
+	};
+
+	exports.default = ScrollText;
+
+/***/ },
+/* 21 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	exports.default = function (val, min, max) {
+		return Math.max(Math.min(val, max), min);
+	};
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _ListenerSystem = __webpack_require__(2);
+
+	var _ListenerSystem2 = _interopRequireDefault(_ListenerSystem);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * Track the state of keys (down/up)
+	 *
+	 * Do not change the target when `listening` is true
+	 * @param {DOM element} target - element to listen to for key events
+	 */
+	function Keyboard(target) {
+		this.target = target;
+		this.keydown = {};
+
+		this.listening = false;
+
+		this.keydownLS = new _ListenerSystem2.default(this.target, 'keydown', this.handleKeydown.bind(this));
+
+		this.keyupLS = new _ListenerSystem2.default(this.target, 'keyup', this.handleKeyup.bind(this));
+	}
+
+	Keyboard.prototype.clear = function () {
+		this.keydown = {};
+	};
+
+	Keyboard.getKeyID = function (e) {
+		return e.keyCode;
+	};
+
+	Keyboard.prototype.handleKeydown = function (e) {
+		var keyID = Keyboard.getKeyID(e);
+
+		// console.log("keyID:", keyID);
+
+		this.keydown[keyID] = true;
+	};
+
+	Keyboard.prototype.handleKeyup = function (e) {
+		var keyID = Keyboard.getKeyID(e);
+
+		this.keydown[keyID] = false;
+	};
+
+	Keyboard.prototype.start = function () {
+		if (!this.listening) {
+			this.keydownLS.start();
+			this.keyupLS.start();
+
+			this.listening = true;
+		}
+	};
+
+	Keyboard.prototype.stop = function () {
+		if (this.listening) {
+			this.keydownLS.stop();
+			this.keyupLS.stop();
+
+			this.listening = false;
+		}
+	};
+
+	exports.default = Keyboard;
+
+/***/ },
+/* 23 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	/**
+	 * @param {object} o
+	 * - @property {string} [name]
+	 * - @property {HTML element} element
+	 * - @property {number} [showZ] - z-index of menu when shown
+	 * - @property {number} [hideZ] - z-index of menu when hidden
+	 * - @property {array} [listenerSystems = []]
+	 * - @property {function} [startWork = function(){}]
+	 * - @property {function} [stopWork = function(){}]
+	 */
+	function Menu(o) {
+		this.name = o.name || "unnamed";
+		this.element = o.element;
+		this.showZ = o.showZ || 1000;
+		this.hideZ = o.hideZ || -1000;
+		this.startWork = o.startWork || function () {};
+		this.stopWork = o.stopWork || function () {};
+
+		this.listenerSystems = o.listenerSystems || [];
+		this.listenerSystemsActive = false;
+
+		this.on = false;
+		this.shown = false;
+		this.element.style['z-index'] = this.hideZ;
+		this.element.style.visibility = 'hidden';
+	}
+
+	Menu.prototype.show = function () {
+		if (!this.shown) {
+			this.element.style['z-index'] = this.showZ;
+			this.element.style.visibility = 'visible';
+
+			this.shown = true;
+		}
+	};
+
+	Menu.prototype.hide = function () {
+		if (this.shown) {
+			this.element.style['z-index'] = this.hideZ;
+			this.element.style.visibility = 'hidden';
+
+			this.shown = false;
+		}
+	};
+
+	Menu.prototype.start = function () {
+		this.show();
+
+		if (!this.on) {
+			this.startListenerSystems();
+
+			this.startWork();
+
+			this.on = true;
+		}
+	};
+
+	Menu.prototype.stop = function () {
+		this.hide();
+
+		if (this.on) {
+			this.stopListenerSystems();
+
+			this.stopWork();
+
+			this.on = false;
+		}
+	};
+
+	Menu.prototype.startListenerSystems = function () {
+		if (!this.listenerSystemsActive) {
+			var numLSs = this.listenerSystems.length;
+
+			for (var i = 0; i < numLSs; ++i) {
+				this.listenerSystems[i].start();
+			}
+
+			this.listenerSystemsActive = true;
+		}
+	};
+
+	Menu.prototype.stopListenerSystems = function () {
+		if (this.listenerSystemsActive) {
+			var numLSs = this.listenerSystems.length;
+
+			for (var i = 0; i < numLSs; ++i) {
+				this.listenerSystems[i].stop();
+			}
+
+			this.listenerSystemsActive = false;
+		}
+	};
+
+	exports.default = Menu;
+
+/***/ }
+/******/ ]);</script>
+	</body>
+</html>
