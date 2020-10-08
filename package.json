@@ -1,6 +1,10 @@
 {
   "name": "broken-bounty",
   "version": "1.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Costava/broken-bounty.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-dev": "gulp clear-build && gulp dev-tasks && gulp embed && gulp html-dev",
