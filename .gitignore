@@ -1,8 +1,7 @@
-# Ignore files that can be installed with `npm install`
 node_modules
-
-output
-
 npm-debug.log
+
+dist
+output
 
 *.js.map
