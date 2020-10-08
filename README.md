@@ -17,8 +17,8 @@ Originally developed for [js13kGames](http://js13kgames.com/) 2016.
 
 ## Development
 
-1. Clone the repo
-2. Work off of the `dev` branch: `git checkout dev`
+1. Fork the repo
+2. Create a branch off of the `dev` branch
 3. `npm install`
 4. `npm run build-dev`
 
