@@ -1,6 +1,7 @@
 {
   "name": "broken-bounty",
   "version": "1.0.1",
+  "license": "GPL-3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/Costava/broken-bounty.git"
