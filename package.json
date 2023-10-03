@@ -20,7 +20,7 @@
     "del": "2.2.2",
     "gulp": "4.0.2",
     "html-minifier": "3.0.2",
-    "postcss": "5.1.2",
+    "postcss": "8.4.31",
     "postcss-advanced-variables": "1.2.2",
     "webpack": "1.13.1"
   }
